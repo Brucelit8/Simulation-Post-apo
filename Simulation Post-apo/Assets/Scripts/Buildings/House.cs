@@ -11,12 +11,7 @@ public class House : Building {
         bed = (int)Random.Range(2f, 10f);
         water = (int)Random.Range(0f, 10f);
         food = (int)Random.Range(0f, 10f);
-
-        t_type = GameObject.Find("Type").GetComponent<Text>();
-        t_safety = GameObject.Find("Safety").GetComponent<Text>();
-        t_bed = GameObject.Find("Bed").GetComponent<Text>();
-        t_water = GameObject.Find("Water").GetComponent<Text>();
-        t_food = GameObject.Find("Food").GetComponent<Text>();
+        bandage = (int)Random.Range(1f, 3f);
     }
 
     // Update is called once per frame
@@ -44,10 +39,13 @@ public class House : Building {
 
     public override void Details()
     {
-        t_type.text = "Type : House";
-        t_safety.text = "Safety : " + safety;
-        t_bed.text = "Bed : " + bed;
-        t_water.text = "Water : " + water;
-        t_food.text = "Food : " + food;
+        VariablesUI.t_type.text = "Type : House";
+        VariablesUI.t_safety.text = "Safety : " + safety;
+        VariablesUI.t_bed.text = "Bed : " + bed;
+        VariablesUI.t_water.text = "Water : " + water;
+        VariablesUI.t_food.text = "Food : " + food;
+        VariablesUI.t_bandage.text = "Bandage : " + bandage;
+
     }
+
 }
