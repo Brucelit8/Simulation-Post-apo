@@ -24,7 +24,6 @@ public class House : Building {
     {
         if (changed)
         {
-            Debug.Log("Changement");
             if (selected)
             {
                 string s = "Materials/House_3_s";
@@ -43,7 +42,7 @@ public class House : Building {
         }
     }
 
-    public void Details()
+    public override void Details()
     {
         t_type.text = "Type : House";
         t_safety.text = "Safety : " + safety;

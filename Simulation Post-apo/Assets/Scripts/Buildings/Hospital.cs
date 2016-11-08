@@ -23,7 +23,6 @@ public class Hospital : Building {
     {
         if (changed)
         {
-            Debug.Log("Changement");
             if (selected)
             {
                 string s = "Materials/House_4_s";
@@ -42,7 +41,7 @@ public class Hospital : Building {
         }
     }
 
-    public void Details()
+    public override void Details()
     {
         t_type.text = "Type : Hospital";
         t_safety.text = "Safety : " + safety;
