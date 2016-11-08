@@ -26,48 +26,16 @@ public class UserController : MonoBehaviour {
                     (Selected.GetComponent(typeSelect) as Building).selected = false;
                 }
 
-                if (hit.collider.tag == "House")
+                if(hit.collider.tag == "House" || hit.collider.tag == "Hospital" || hit.collider.tag == "Supermarket" || hit.collider.tag == "Remains")
                 {
-
-                    hit.transform.gameObject.GetComponent<House>().Details();
+                    string buildingType = hit.collider.tag;
+                    (hit.transform.gameObject.GetComponent(buildingType) as Building).Details();
                     Selected = hit.transform.gameObject;
                     firstSelect = true;
-                    Selected.GetComponent<House>().selected = true;
-                    Selected.GetComponent<House>().changed = true;
-                    typeSelect = "House";
-
+                    (Selected.GetComponent(buildingType) as Building).changed = true;
+                    (Selected.GetComponent(buildingType) as Building).selected = true;
+                    typeSelect = buildingType;
                 }
-                else if (hit.collider.tag == "Hospital")
-                {
-                    hit.transform.gameObject.GetComponent<Hospital>().Details();
-                    Selected = hit.transform.gameObject;
-                    firstSelect = true;
-                    Selected.GetComponent<Hospital>().selected = true;
-                    Selected.GetComponent<Hospital>().changed = true;
-                    typeSelect = "Hospital";
-
-                }
-                else if (hit.collider.tag == "Supermarket")
-                {
-                    hit.transform.gameObject.GetComponent<Supermarket>().Details();
-                    Selected = hit.transform.gameObject;
-                    firstSelect = true;
-                    Selected.GetComponent<Supermarket>().selected = true;
-                    Selected.GetComponent<Supermarket>().changed = true;
-                    typeSelect = "Supermarket";
-
-                }
-                else if (hit.collider.tag == "Remain")
-                {
-                    hit.transform.gameObject.GetComponent<Remains>().Details();
-                    Selected = hit.transform.gameObject;
-                    firstSelect = true;
-                    Selected.GetComponent<Remains>().selected = true;
-                    Selected.GetComponent<Remains>().changed = true;
-                    typeSelect = "Remains";
-
-                }
-
             }
         }
     }

@@ -31,5 +31,6 @@ public class Building : MonoBehaviour{
         I = new Inventory();
     }
 
+    public void Details() { }
 
 }
