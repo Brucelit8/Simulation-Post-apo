@@ -4,6 +4,9 @@ using System.Collections;
 
 public class Building : MonoBehaviour{
 
+    public bool selected = false;
+    public bool changed = false;
+
     protected Text t_type;
     protected Text t_safety;
     protected Text t_bed;
@@ -17,25 +20,16 @@ public class Building : MonoBehaviour{
 
 	// Use this for initialization
 	void Start () {
-
     }
 
     // Update is called once per frame
     void Update () {
-	
+
 	}
 
-    public Building(int s, int b, int w, int f)
-    {
-        safety = s;
-        bed = b;
-        water = w;
-        food = f;
-
-
+    public Building() {
+        I = new Inventory();
     }
-
-    public Building() { }
 
 
 }

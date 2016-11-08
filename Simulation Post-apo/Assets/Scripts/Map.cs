@@ -109,7 +109,7 @@ public class Map : MonoBehaviour {
             int x = Random.Range(0, size);
             int y = Random.Range(0, size);
 
-            if (map[x, y] == 0 && !AnyNeighbors(x, y, 4, 5))
+            if (map[x, y] == 0 && !AnyNeighbors(x, y, 4, size/5) && x > size/4 && y > size/4 && x < size - size/4 && y < size - size/4)
             {
                 map[x, y] = 4;
                 SpawningHospitals(n - 1);
@@ -129,7 +129,7 @@ public class Map : MonoBehaviour {
             int x = Random.Range(0, size);
             int y = Random.Range(0, size);
 
-            if (map[x, y] == 0 && !AnyNeighbors(x, y, 5, 5))
+            if (map[x, y] == 0 && !AnyNeighbors(x, y, 5, size/5) && x > size /4 && y > size /4 && x < size - size /4 && y < size - size /4)
             {
                 map[x, y] = 5;
                 SpawningSupermarkets(n - 1);

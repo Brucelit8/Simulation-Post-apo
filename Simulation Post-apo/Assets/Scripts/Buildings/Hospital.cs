@@ -6,10 +6,10 @@ public class Hospital : Building {
 
 	// Use this for initialization
 	void Start () {
-        safety = (int)Random.Range(0.0f, 10.0f);
-        bed = (int)Random.Range(2.0f, 10.0f);
-        water = (int)Random.Range(0.0f, 10.0f);
-        food = (int)Random.Range(0.0f, 10.0f);
+        safety = (int)Random.Range(0f, 10f);
+        bed = (int)Random.Range(2f, 10f);
+        water = (int)Random.Range(0f, 10f);
+        food = (int)Random.Range(0f, 10f);
 
         t_type = GameObject.Find("Type").GetComponent<Text>();
         t_safety = GameObject.Find("Safety").GetComponent<Text>();
@@ -19,11 +19,28 @@ public class Hospital : Building {
     }
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
-
-    public Hospital(int s, int b, int w, int f) :base(s,b,w,f){ }
+	void Update ()
+    {
+        if (changed)
+        {
+            Debug.Log("Changement");
+            if (selected)
+            {
+                string s = "Materials/House_4_s";
+                Material[] mats = GetComponent<Renderer>().materials;
+                mats[0] = Resources.Load(s, typeof(Material)) as Material;
+                GetComponent<MeshRenderer>().materials = mats;
+            }
+            else
+            {
+                string s = "Materials/House_4";
+                Material[] mats = GetComponent<Renderer>().materials;
+                mats[0] = Resources.Load(s, typeof(Material)) as Material;
+                GetComponent<MeshRenderer>().materials = mats;
+            }
+            changed = false;
+        }
+    }
 
     public void Details()
     {
