@@ -10,7 +10,8 @@ public class Map : MonoBehaviour {
     public int nbSupermarkets = 2;
     public int nbHouses = 10;
     public int nbRemains = 50;
-    
+    public int nbSurvivors = 20;
+
     private int[,] map;     //Double Array of int to represent the map as a matrix
     /* 
         0 for the ground
@@ -21,6 +22,8 @@ public class Map : MonoBehaviour {
         5 for supermarket
     */
 
+    public int[,] getMap() { return map; }
+
     public Transform mapmanager;
     public GameObject wall;
     public GameObject ground;
@@ -28,11 +31,13 @@ public class Map : MonoBehaviour {
     public GameObject hospital;
     public GameObject house;
     public GameObject supermarket;
+    public GameObject AgentManager;
 
     void Start()
     {
         GenerateMap();
         Load();
+        AgentManager.GetComponent<AgentsSpawn>().spawningSurvivors();
     }
 
     void GenerateMap()
@@ -86,16 +91,19 @@ public class Map : MonoBehaviour {
                 {
                     GameObject go = (GameObject)Instantiate(house, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
                     go.transform.SetParent(mapmanager);
+                    createBuildingNodes(i, j, go);
                 }
                 else if (map[i, j] == 4)
                 {
                     GameObject go = (GameObject)Instantiate(hospital, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
                     go.transform.SetParent(mapmanager);
+                    createBuildingNodes(i, j, go);
                 }
                 else if (map[i, j] == 5)
                 {
                     GameObject go = (GameObject)Instantiate(supermarket, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
                     go.transform.SetParent(mapmanager);
+                    createBuildingNodes(i, j, go);
                 }
             }
         }
@@ -233,7 +241,120 @@ public class Map : MonoBehaviour {
             }
     }
 
+    void createBuildingNodes(int i, int j, GameObject p)
+    {
+        if (i > 0)
+        {
+            if (i < size - 1)
+            {
+                if (j > 0)
+                {
+                    //Case of a building not on an edge
+                    if (j < size - 1)
+                    {
+                        GameObject n1 = new GameObject();
+                        createNode(n1, p, "N1", 1, 1);
 
+                        GameObject n2 = new GameObject();
+                        createNode(n2, p, "N2", 1, -1);
+
+                        GameObject n3 = new GameObject();
+                        createNode(n3, p, "N3", -1, 1);
+
+                        GameObject n4 = new GameObject();
+                        createNode(n4, p, "N4", -1, -1);
+                    }
+                    //Case of a building on the bottom edge of the map but not in a corner
+                    else
+                    {
+                        GameObject n1 = new GameObject();
+                        createNode(n1, p, "N1", 1, -1);
+
+                        GameObject n2 = new GameObject();
+                        createNode(n2, p, "N2", -1, -1);
+                    }
+                }
+
+                //Case of a building on the upper edge of the map but not in a corner
+                else
+                {
+                    GameObject n1 = new GameObject();
+                    createNode(n1, p, "N1", 1, 1);
+
+                    GameObject n2 = new GameObject();
+                    createNode(n2, p, "N2", -1, 1);
+                }
+            }
+
+            //Case of a building on the right edge of the map
+            else
+            {
+                //Case of a building in the upper right corner
+                if (j == 0)
+                {
+                    GameObject n1 = new GameObject();
+                    createNode(n1, p, "N1", -1, 1);
+                }
+
+                //Case of a building on the right edge, not in a corner
+                else if (j < size - 1)
+                {
+                    GameObject n1 = new GameObject();
+                    createNode(n1, p, "N1", -1, 1);
+
+                    GameObject n2 = new GameObject();
+                    createNode(n2, p, "N2", -1, -1);
+                }
+
+                //Case of a building in the bottom right corner
+                else
+                {
+                    GameObject n1 = new GameObject();
+                    createNode(n1, p, "N1", -1, -1);
+                }
+            }
+        }
+
+        else
+        {
+            //Case of a building in the upper left corner
+            if (j == 0)
+            {
+                GameObject n1 = new GameObject();
+                createNode(n1, p, "N1", 1, 1);
+            }
+
+            //Case of a building on the left edge, not in a corner
+            else if (j < size - 1)
+            {
+                GameObject n1 = new GameObject();
+                createNode(n1, p, "N1", 1, 1);
+
+                GameObject n2 = new GameObject();
+                createNode(n1, p, "N2", 1, -1);
+            }
+
+            //Case of a building in the bottom left corner
+            else
+            {
+                GameObject n1 = new GameObject();
+                createNode(n1, p, "N1", 1, -1);
+            }
+        }
+    }
+
+    void createNode(GameObject n, GameObject parent, string name, int xParity, int zParity)
+    {
+        n.name = name;
+        //n.gameObject.transform.parent = parent.gameObject.transform;
+        n.gameObject.transform.SetParent(parent.transform);
+        n.transform.localPosition = new Vector3(parent.gameObject.transform.GetComponent<BoxCollider>().size.x * xParity / 1.2f, 0,
+           parent.gameObject.transform.GetComponent<BoxCollider>().size.z * zParity / 1.2f);
+        n.AddComponent<BoxCollider>();
+        n.GetComponent<BoxCollider>().isTrigger = true;
+        //n.GetComponent<BoxCollider>().size *= 0.5f;
+        n.tag = "Node";
+    }
 
     bool AnyNeighbors(int x, int y, int neighbor, int depth)
     {
