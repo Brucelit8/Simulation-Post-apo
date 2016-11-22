@@ -4,6 +4,10 @@ using System.Collections;
 
 public class VariablesUI : MonoBehaviour {
 
+    public static Slider t_slider, th_slider, hu_slider, he_slider;
+
+    public static float a_thirst, a_tiredness, a_hunger, a_health;
+
     public static Text t_type;
     public static Text t_safety;
     public static Text t_bed;
@@ -36,10 +40,18 @@ public class VariablesUI : MonoBehaviour {
         t_food = GameObject.Find("Food").GetComponent<Text>();
         t_bandage = GameObject.Find("Bandage").GetComponent<Text>();
 
+        th_slider = GameObject.Find("Thirst Slider").GetComponent<Slider>();
+        t_slider = GameObject.Find("Tiredness Slider").GetComponent<Slider>();
+        hu_slider = GameObject.Find("Hunger Slider").GetComponent<Slider>();
+        he_slider = GameObject.Find("Health Slider").GetComponent<Slider>();
+
     }
 
     // Update is called once per frame
     void Update () {
-	
+        th_slider.value = a_thirst;
+        he_slider.value = a_health;
+        hu_slider.value = a_hunger;
+        t_slider.value = a_tiredness;
 	}
 }

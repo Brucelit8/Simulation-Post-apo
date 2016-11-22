@@ -22,8 +22,19 @@ public class UserController : MonoBehaviour {
             {
                 if(firstSelect)
                 {
-                    (Selected.GetComponent(typeSelect) as Building).changed = true;
-                    (Selected.GetComponent(typeSelect) as Building).selected = false;
+                    if(!(Selected == null))
+                    {
+                        if (Selected.GetComponent<Collider>().tag == "Agent")
+                        {
+                            Selected.GetComponent<Statistics>().changed = true;
+                            Selected.GetComponent<Statistics>().selected = false;
+                        }
+                        else
+                        {
+                            (Selected.GetComponent(typeSelect) as Building).changed = true;
+                            (Selected.GetComponent(typeSelect) as Building).selected = false;
+                        }
+                    }
                 }
 
                 if(hit.collider.tag == "House" || hit.collider.tag == "Hospital" || hit.collider.tag == "Supermarket" || hit.collider.tag == "Remains")
@@ -35,6 +46,13 @@ public class UserController : MonoBehaviour {
                     (Selected.GetComponent(buildingType) as Building).changed = true;
                     (Selected.GetComponent(buildingType) as Building).selected = true;
                     typeSelect = buildingType;
+                }
+                else if(hit.collider.tag == "Agent")
+                {
+                    Selected = hit.transform.gameObject;
+                    Selected.GetComponent<Statistics>().changed = true;
+                    Selected.GetComponent<Statistics>().selected = true;
+
                 }
             }
         }
