@@ -91,18 +91,30 @@ public class Map : MonoBehaviour {
                 {
                     GameObject go = (GameObject)Instantiate(house, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
                     go.transform.SetParent(mapmanager);
+
+                    // building layer
+                    go.layer = 9;
+
                     createBuildingNodes(i, j, go);
                 }
                 else if (map[i, j] == 4)
                 {
                     GameObject go = (GameObject)Instantiate(hospital, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
                     go.transform.SetParent(mapmanager);
+
+                    // building layer
+                    go.layer = 9;
+
                     createBuildingNodes(i, j, go);
                 }
                 else if (map[i, j] == 5)
                 {
                     GameObject go = (GameObject)Instantiate(supermarket, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
                     go.transform.SetParent(mapmanager);
+
+                    // building layer
+                    go.layer = 9;
+
                     createBuildingNodes(i, j, go);
                 }
             }
@@ -243,14 +255,14 @@ public class Map : MonoBehaviour {
 
     void createBuildingNodes(int i, int j, GameObject p)
     {
-        if (i > 0)
+        if (i - 1 != 0)
         {
-            if (i < size - 1)
+            if (i + 1 != size - 1)
             {
-                if (j > 0)
+                if (j - 1 != 0)
                 {
                     //Case of a building not on an edge
-                    if (j < size - 1)
+                    if (j + 1 != size - 1)
                     {
                         GameObject n1 = new GameObject();
                         createNode(n1, p, "N1", 1, 1);
@@ -264,7 +276,7 @@ public class Map : MonoBehaviour {
                         GameObject n4 = new GameObject();
                         createNode(n4, p, "N4", -1, -1);
                     }
-                    //Case of a building on the bottom edge of the map but not in a corner
+                    //Case of a building on the right edge of the map but not in a corner
                     else
                     {
                         GameObject n1 = new GameObject();
@@ -275,7 +287,7 @@ public class Map : MonoBehaviour {
                     }
                 }
 
-                //Case of a building on the upper edge of the map but not in a corner
+                //Case of a building on the left edge of the map but not in a corner
                 else
                 {
                     GameObject n1 = new GameObject();
@@ -286,18 +298,18 @@ public class Map : MonoBehaviour {
                 }
             }
 
-            //Case of a building on the right edge of the map
+            //Case of a building on the bottom edge of the map
             else
             {
-                //Case of a building in the upper right corner
-                if (j == 0)
+                //Case of a building in the bottom left corner
+                if (j - 1 == 0)
                 {
                     GameObject n1 = new GameObject();
                     createNode(n1, p, "N1", -1, 1);
                 }
 
-                //Case of a building on the right edge, not in a corner
-                else if (j < size - 1)
+                //Case of a building on the bottom edge, not in a corner
+                else if (j + 1 != size - 1)
                 {
                     GameObject n1 = new GameObject();
                     createNode(n1, p, "N1", -1, 1);
@@ -318,20 +330,20 @@ public class Map : MonoBehaviour {
         else
         {
             //Case of a building in the upper left corner
-            if (j == 0)
+            if (j - 1 == 0)
             {
                 GameObject n1 = new GameObject();
                 createNode(n1, p, "N1", 1, 1);
             }
 
-            //Case of a building on the left edge, not in a corner
-            else if (j < size - 1)
+            //Case of a building on the upper edge, not in a corner
+            else if (j + 1 != size - 1)
             {
                 GameObject n1 = new GameObject();
                 createNode(n1, p, "N1", 1, 1);
 
                 GameObject n2 = new GameObject();
-                createNode(n1, p, "N2", 1, -1);
+                createNode(n2, p, "N2", 1, -1);
             }
 
             //Case of a building in the bottom left corner
@@ -348,11 +360,15 @@ public class Map : MonoBehaviour {
         n.name = name;
         //n.gameObject.transform.parent = parent.gameObject.transform;
         n.gameObject.transform.SetParent(parent.transform);
-        n.transform.localPosition = new Vector3(parent.gameObject.transform.GetComponent<BoxCollider>().size.x * xParity / 1.2f, 0,
-           parent.gameObject.transform.GetComponent<BoxCollider>().size.z * zParity / 1.2f);
+        n.transform.position = new Vector3(parent.gameObject.transform.localPosition.x + xParity, parent.gameObject.transform.localPosition.y,
+           parent.gameObject.transform.localPosition.z + zParity);
         n.AddComponent<BoxCollider>();
         n.GetComponent<BoxCollider>().isTrigger = true;
-        //n.GetComponent<BoxCollider>().size *= 0.5f;
+        n.GetComponent<BoxCollider>().size *= 0.2f;
+
+        // Node layer
+        n.layer = 10;
+
         n.tag = "Node";
     }
 

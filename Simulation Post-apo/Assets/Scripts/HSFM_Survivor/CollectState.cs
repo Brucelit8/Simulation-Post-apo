@@ -56,9 +56,8 @@ public class CollectState : ISurvivor
             rZ = Random.Range(survivor.transform.position.z - movementRange, survivor.transform.position.z + movementRange);
 
             point = new Vector3(rX, survivor.transform.position.y, rZ);
-            point = checkWallHit(new Vector3(point.x, point.y + 0.2f, point.z));
-            /*
-            if (Physics.Linecast(survivor.transform.position, , out hit))
+            
+            if (Physics.Linecast(survivor.transform.position, point, out hit))
             {
                 if (hit.collider.gameObject.tag == "Wall")
                 {
@@ -70,7 +69,7 @@ public class CollectState : ISurvivor
                     point.z = survivor.transform.position.z + destRange.z;
                 }
             }
-            */
+            
             moving = true;
             lastPointReached = false;
             checkBuildingHit(point);
@@ -187,27 +186,6 @@ public class CollectState : ISurvivor
                     moving = false;
             }
         }
-    }
-
-    Vector3 checkWallHit(Vector3 destination)
-    {
-        if (Physics.Linecast(survivor.transform.position, destination, out hit))
-        {
-            if (hit.collider.gameObject.tag == "Wall")
-            {
-                Vector3 destRange = new Vector3(destination.x - survivor.transform.position.x, destination.y - survivor.transform.position.y,
-                    destination.z - survivor.transform.position.z);
-                destRange = Quaternion.Euler(0, 180, 0) * destRange;
-                Debug.DrawLine(survivor.transform.position, destRange, Color.red);
-                destination.x = survivor.transform.position.x + destRange.x;
-                destination.y = survivor.transform.position.y + destRange.y;
-                destination.z = survivor.transform.position.z + destRange.z;
-
-                return destination;
-            }
-        }
-
-        return destination;
     }
 
     public void ToBuildState()

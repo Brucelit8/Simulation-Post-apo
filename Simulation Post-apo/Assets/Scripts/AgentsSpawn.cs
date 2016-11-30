@@ -33,14 +33,16 @@ public class AgentsSpawn : MonoBehaviour {
 
             if (map[x,y] == 0)
             {
-                GameObject g = (GameObject)Instantiate(survivor, new Vector3(x, 0.2f, y), Quaternion.identity);
+                GameObject g = (GameObject)Instantiate(survivor, new Vector3(x, 0.1f, y), Quaternion.identity);
                 g.transform.localScale -= new Vector3(scaleChange, scaleChange, scaleChange);
 
+                // Player layer
+                g.layer = 8;
+
                 SurvivorBasicState sb = g.AddComponent(typeof(SurvivorBasicState)) as SurvivorBasicState;
-                Rigidbody rb = g.AddComponent<Rigidbody>();
-                rb.mass = 90;
                 //BoxCollider bc = g.AddComponent<BoxCollider>();
-                //bc.center = new Vector3(g.transform.localPosition.x, g.transform.localPosition.y, g.transform.localPosition.z);
+                Rigidbody rb = g.AddComponent<Rigidbody>();
+                g.tag = "Agent";
 
                 g.transform.SetParent(gameObject.transform);
                 remainingSurvivors--;
