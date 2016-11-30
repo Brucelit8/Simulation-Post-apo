@@ -276,7 +276,7 @@ public class Map : MonoBehaviour {
                         GameObject n4 = new GameObject();
                         createNode(n4, p, "N4", -1, -1);
                     }
-                    //Case of a building on the bottom edge of the map but not in a corner
+                    //Case of a building on the right edge of the map but not in a corner
                     else
                     {
                         GameObject n1 = new GameObject();
@@ -287,7 +287,7 @@ public class Map : MonoBehaviour {
                     }
                 }
 
-                //Case of a building on the upper edge of the map but not in a corner
+                //Case of a building on the left edge of the map but not in a corner
                 else
                 {
                     GameObject n1 = new GameObject();
@@ -298,17 +298,17 @@ public class Map : MonoBehaviour {
                 }
             }
 
-            //Case of a building on the right edge of the map
+            //Case of a building on the bottom edge of the map
             else
             {
-                //Case of a building in the upper right corner
+                //Case of a building in the bottom left corner
                 if (j - 1 == 0)
                 {
                     GameObject n1 = new GameObject();
                     createNode(n1, p, "N1", -1, 1);
                 }
 
-                //Case of a building on the right edge, not in a corner
+                //Case of a building on the bottom edge, not in a corner
                 else if (j + 1 != size - 1)
                 {
                     GameObject n1 = new GameObject();
@@ -336,14 +336,14 @@ public class Map : MonoBehaviour {
                 createNode(n1, p, "N1", 1, 1);
             }
 
-            //Case of a building on the left edge, not in a corner
+            //Case of a building on the upper edge, not in a corner
             else if (j + 1 != size - 1)
             {
                 GameObject n1 = new GameObject();
                 createNode(n1, p, "N1", 1, 1);
 
                 GameObject n2 = new GameObject();
-                createNode(n1, p, "N2", 1, -1);
+                createNode(n2, p, "N2", 1, -1);
             }
 
             //Case of a building in the bottom left corner
