@@ -28,4 +28,13 @@ public class Building : MonoBehaviour{
 
     public virtual void Details() { }
 
+    public int getFood() { return food; }
+    public void setFood(int f)
+    {
+        food = f;
+        Details();
+    }
+    public int getWater() { return water; }
+    public int getBandage() { return bandage; }
+
 }

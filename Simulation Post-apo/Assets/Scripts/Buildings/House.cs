@@ -4,14 +4,20 @@ using System.Collections;
 
 public class House : Building {
 
-	// Use this for initialization
-	void Start () {
+    int availableBeds;
+    int maxBeds;
+
+    // Use this for initialization
+    void Start () {
 
         safety = (int)Random.Range(0f, 10f);
         bed = (int)Random.Range(2f, 10f);
         water = (int)Random.Range(0f, 10f);
         food = (int)Random.Range(0f, 10f);
         bandage = (int)Random.Range(1f, 3f);
+
+        availableBeds = bed;
+        maxBeds = availableBeds;
     }
 
     // Update is called once per frame
@@ -47,5 +53,14 @@ public class House : Building {
         VariablesUI.t_bandage.text = "Bandage : " + bandage;
 
     }
+
+    public void setRemainingBeds(int b)
+    {
+        availableBeds--;
+        Details();
+    }
+
+    public int getRemainingBeds() { return availableBeds; }
+    public int getMaxBeds() { return maxBeds; }
 
 }
