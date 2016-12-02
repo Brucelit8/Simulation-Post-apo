@@ -9,7 +9,6 @@ public class CreateCurves : MonoBehaviour {
     public float timeLimit = 0.2f;
     public Transform origin;
     public float xScaleA, yScaleA, xScaleF, yScaleF, xScaleW, yScaleW;
-    private Vector3 lastA, lastF, lastW;
     int nbAgents;
     int nbFood;
     int nbWater;
@@ -191,9 +190,6 @@ public class CreateCurves : MonoBehaviour {
                         LR2.SetPosition(j, new Vector3(origin.position.x + j * xScaleF, origin.position.y + yScaleF * valuesF[j], origin.position.z));
                         LR3.SetPosition(j, new Vector3(origin.position.x + j * xScaleW, origin.position.y + yScaleW * valuesW[j], origin.position.z));
                     }
-                    lastA = new Vector3(origin.position.x + i1 * xScaleA, origin.position.y + yScaleA * valuesA[i1], origin.position.z);
-                    lastF = new Vector3(origin.position.x + i2 * xScaleF, origin.position.y + yScaleF * valuesF[i2], origin.position.z);
-                    lastW = new Vector3(origin.position.x + i3 * xScaleW, origin.position.y + yScaleW * valuesW[i3], origin.position.z);
                     break;
                 }
 
@@ -203,7 +199,6 @@ public class CreateCurves : MonoBehaviour {
                     {
                         LR1.SetPosition(j, new Vector3(origin.position.x + j * xScaleA, origin.position.y + yScaleA * valuesA[j], origin.position.z));
                     }
-                    lastA = new Vector3(origin.position.x + i1 * xScaleA, origin.position.y + yScaleA * valuesA[i1], origin.position.z);
                     break;
                 }
 
@@ -213,7 +208,6 @@ public class CreateCurves : MonoBehaviour {
                     {
                         LR2.SetPosition(j, new Vector3(origin.position.x + j * xScaleF, origin.position.y + yScaleF * valuesF[j], origin.position.z));
                     }
-                    lastF = new Vector3(origin.position.x +i2 * xScaleF, origin.position.y + yScaleF * valuesF[i2], origin.position.z);
                     break;
                 }
 
@@ -223,7 +217,6 @@ public class CreateCurves : MonoBehaviour {
                     {
                         LR3.SetPosition(j, new Vector3(origin.position.x + j * xScaleW, origin.position.y + yScaleW * valuesW[j], origin.position.z));
                     }
-                    lastW = new Vector3(origin.position.x + i3 * xScaleW, origin.position.y + yScaleW * valuesW[i3], origin.position.z);
                     break;
                 }
 
@@ -366,24 +359,18 @@ public class CreateCurves : MonoBehaviour {
             case state.Agents:
             {
                     a_text.text = ""+nbAgents;
-                    a_text.transform.position = lastA;
-                    Debug.Log("Vieux point : " + a_text.transform.position);
                     break;
             }
 
             case state.Food:
             {
                     f_text.text = "" + nbFood;
-                    f_text.transform.position = lastF;
-
                     break;
             }
 
             case state.Water:
             {
                     w_text.text = "" + nbWater;
-                    w_text.transform.position = lastW;
-
                     break;
             }
             case state.All:
@@ -391,11 +378,6 @@ public class CreateCurves : MonoBehaviour {
                     a_text.text = "" + nbAgents;
                     f_text.text = "" + nbFood;
                     w_text.text = "" + nbWater;
-
-                    a_text.transform.position = lastA;
-                    f_text.transform.position = lastF;
-                    w_text.transform.position = lastW;
-
                     break;
             }
         }

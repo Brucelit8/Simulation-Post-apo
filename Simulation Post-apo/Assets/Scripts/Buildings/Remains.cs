@@ -4,7 +4,8 @@ using System.Collections;
 
 public class Remains : Building
 {
-
+    public GameObject ground;
+    public bool lol = false;
     // Use this for initialization
     void Start()
     {
@@ -18,6 +19,17 @@ public class Remains : Building
     // Update is called once per frame
     void Update()
     {
+        if(lol)
+        {
+            water = 0;
+            food = 0;
+            bandage = 0;
+        }
+        if(water == 0 && food == 0 && bandage == 0)
+        {
+            switchToGround();
+        }
+
         if (changed)
         {
             if (selected)
@@ -48,4 +60,12 @@ public class Remains : Building
         VariablesUI.t_bandage.text = "Bandage : " + bandage;
     }
 
+    void switchToGround()
+    {
+        Transform T = transform;
+        transform.gameObject.SetActive(false);
+        GameObject go = (GameObject)Instantiate(ground, T.position, T.rotation);
+        go.transform.SetParent(GameObject.Find("MapManager").transform);
+        Destroy(gameObject);
+    }
 }
