@@ -53,7 +53,7 @@ public class NourrishState : ISurvivor
         {
             survivor.getWayPointsList().Clear();
             survivor.checkBuildingHit(survivor.home.transform.position, true);
-            survivor.getWayPointsList().Add(survivor.home.transform.position);
+            survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
             roadHomeSet = true;
         }
 

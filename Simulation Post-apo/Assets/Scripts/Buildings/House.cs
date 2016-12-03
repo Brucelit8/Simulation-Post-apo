@@ -4,6 +4,7 @@ using System.Collections;
 
 public class House : Building {
 
+    public GameObject Sign;
     int availableBeds;
     int maxBeds;
 
@@ -24,6 +25,7 @@ public class House : Building {
     // Update is called once per frame
     void Update()
     {
+
         if (changed)
         {
             if (selected)
@@ -64,5 +66,29 @@ public class House : Building {
 
     public int getRemainingBeds() { return availableBeds; }
     public int getMaxBeds() { return maxBeds; }
+
+    public void setSign(int n)
+    {
+        switch(n)
+        {
+            case 0:
+                Sign.GetComponent<SpriteRenderer>().enabled = false;
+                Sign.transform.rotation = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+                break;
+            case 1:
+                Sign.GetComponent<SpriteRenderer>().enabled = true;
+                Sign.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/sleep");
+                break;
+            case 2:
+                Sign.GetComponent<SpriteRenderer>().enabled = true;
+                Sign.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/repair");
+                break;
+            case 3:
+                Sign.GetComponent<SpriteRenderer>().enabled = true;
+                Sign.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/build");
+                break;
+
+        }
+    }
 
 }

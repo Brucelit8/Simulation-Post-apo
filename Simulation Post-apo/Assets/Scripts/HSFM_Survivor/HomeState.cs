@@ -4,7 +4,6 @@ using System.Collections;
 public class HomeState : ISurvivor
 {
     private readonly SurvivorBasicState survivor;
-
     public HomeState(SurvivorBasicState survivorState)
     {
         survivor = survivorState;
@@ -18,7 +17,7 @@ public class HomeState : ISurvivor
 	// Update is called once per frame
 	public void UpdateState ()
     {
-        
+        survivor.GetComponent<Statistics>().AgentVisible(false);
 
         if (survivor.getSurvivorHunger() < 15 || survivor.getSurvivorThirst() < 15)
         {
@@ -29,17 +28,21 @@ public class HomeState : ISurvivor
         else if (survivor.getSurvivorTiredness() < 15)
         {
             Debug.Log("DODO");
+            survivor.home.GetComponent<House>().setSign(1);
             ToSleepState();
         }
 
         else if (survivor.home.GetComponent<House>().getSafety() < 10 && survivor.home.GetComponent<House>().getScrap() >= 3)
         {
-            Debug.Log("CONSTRUIRE");
+            survivor.home.GetComponent<House>().setSign(2);
+            Debug.Log("REPARER");
             ToRepairState();
         }
 
         else
         {
+            survivor.home.GetComponent<House>().setSign(0);
+            survivor.GetComponent<Statistics>().AgentVisible(true);
             ToCollectState();
         }
     }

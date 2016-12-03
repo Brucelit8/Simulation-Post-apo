@@ -14,7 +14,7 @@ public class CollectState : ISurvivor
     bool collectingRessources = false;
     bool goingHome = false;
     bool roadHomeSet = false;
-
+    bool stateChanged = false;
     float detectionRange;
 
     GameObject buildingCollected;
@@ -44,6 +44,7 @@ public class CollectState : ISurvivor
     {
         if (survivor.getSurvivorHunger() < 15 || survivor.getSurvivorThirst() < 15)
         {
+            stateChanged = true;
             ToNourrishState();
         }
 
@@ -178,7 +179,11 @@ public class CollectState : ISurvivor
                             }
                         }
                     }
-
+                    else
+                    {
+                        collectingRessources = false;
+                        moving = false;
+                    }
                     if (survivor.survivorFood == 3 || survivor.survivorWater == 3 || survivor.survivorBandage == 3 || survivor.survivorScrap == 3)
                     {
                         if (survivor.homeSet)
@@ -206,7 +211,7 @@ public class CollectState : ISurvivor
                 {
                     survivor.getWayPointsList().Clear();
                     survivor.checkBuildingHit(survivor.home.transform.position, moving);
-                    survivor.getWayPointsList().Add(survivor.home.transform.position);
+                    survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
                     roadHomeSet = true;
                 }
 
@@ -250,6 +255,14 @@ public class CollectState : ISurvivor
                     }
                 }
             }
+        }
+
+        if(stateChanged)
+        {
+            goingHome = false;
+            collectingRessources = false;
+            moving = false;
+            stateChanged = false;
         }
     }
     /*
@@ -327,8 +340,9 @@ public class CollectState : ISurvivor
                 {
                     buildingCollected = other.gameObject;
                     survivor.getWayPointsList().Clear();
-                    survivor.getWayPointsList().Add(new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
-                        other.gameObject.transform.position.z));
+                    survivor.checkBuildingHit(buildingCollected.transform.position, moving);
+                    survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
+                            other.gameObject.transform.position.z));
                     collectingRessources = true;
                 }
             }
@@ -339,7 +353,8 @@ public class CollectState : ISurvivor
                 buildingCollected = other.gameObject;
                 collectingRessources = true;
                 survivor.getWayPointsList().Clear();
-                survivor.getWayPointsList().Add(new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
+                survivor.checkBuildingHit(buildingCollected.transform.position, moving);
+                survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count,new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
                         other.gameObject.transform.position.z));
             }
         }

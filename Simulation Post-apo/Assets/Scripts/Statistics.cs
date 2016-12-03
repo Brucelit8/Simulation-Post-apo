@@ -15,12 +15,16 @@ public class Statistics : MonoBehaviour
     public bool selected = false;
     public bool changed = false;
 
+    public GameObject A;
+
     void Start()
     {
         health = this.GetComponent<SurvivorBasicState>().getSurvivorHealth();
         thirst = this.GetComponent<SurvivorBasicState>().getSurvivorThirst();
         tiredness = this.GetComponent<SurvivorBasicState>().getSurvivorTiredness();
         hunger = this.GetComponent<SurvivorBasicState>().getSurvivorHunger();
+
+
     }
 
     // Update is called once per frame
@@ -124,5 +128,26 @@ public class Statistics : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void AgentVisible(bool b)
+    {
+        Component[] R = GetComponentsInChildren(typeof(Renderer));
+        foreach (Renderer r in R)
+        {
+            if (r.name == "Knight")
+            {
+                if (b)
+                {
+                    r.enabled = true;
+                }
+                else
+                {
+                    r.enabled = false;
+                }
+            }
+        }
+
+
     }
 }

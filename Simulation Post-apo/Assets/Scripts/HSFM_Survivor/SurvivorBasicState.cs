@@ -109,9 +109,9 @@ public class SurvivorBasicState : MonoBehaviour
         {
             if (hit.collider.gameObject.tag == "House" || hit.collider.gameObject.tag == "Supermarket" || hit.collider.gameObject.tag == "Hospital")
             {
-                if (currentMap.GetComponent<Map>().getMap()[(int)destination.x, (int)destination.z] != 3
-                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x, (int)destination.z] != 4
-                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x, (int)destination.z] != 5)
+                if (currentMap.GetComponent<Map>().getMap()[(int)destination.x + 1, (int)destination.z + 1] != 3
+                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x + 1, (int)destination.z + 1] != 4
+                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x + 1, (int)destination.z + 1] != 5)
                     getAroundBuilding(this.transform.position, hit.collider.gameObject, destination);
                 else
                     moving = false;
