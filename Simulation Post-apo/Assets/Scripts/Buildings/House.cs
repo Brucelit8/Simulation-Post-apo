@@ -4,10 +4,14 @@ using System.Collections;
 
 public class House : Building {
 
-    public GameObject Sign;
+    public GameObject Sign, farm, well;
     int availableBeds;
     int maxBeds;
+    float spawnTime = 0.0f;
 
+    public bool haveWell = false;
+    public bool haveFarm = false;
+    
     // Use this for initialization
     void Start () {
 
@@ -17,7 +21,7 @@ public class House : Building {
         food = (int)Random.Range(5f, 12f);
         bandage = (int)Random.Range(1f, 3f);
         scrap = (int)Random.Range(1f, 5f);
-
+        spawnTime = Time.fixedTime;
         availableBeds = bed;
         maxBeds = availableBeds;
     }
@@ -26,6 +30,19 @@ public class House : Building {
     void Update()
     {
 
+        if(Time.fixedTime - spawnTime > 4.0f)
+        {
+            if(haveWell)
+            {
+                water += 1;
+            }
+            if(haveFarm)
+            {
+                food += 1;
+            }
+            spawnTime = Time.fixedTime;
+        }
+        
         if (changed)
         {
             if (selected)
@@ -91,4 +108,57 @@ public class House : Building {
         }
     }
 
+    public void build(int v)
+    {
+        int size = GameObject.Find("Map").GetComponent<Map>().size;
+        int[,] M = GameObject.Find("Map").GetComponent<Map>().getMap();
+
+        int ind1=0, ind2=0;
+
+        for(int i = getX()-1; i<getX()+2; i++)
+        {
+            for (int j = getY()-1; j < getY()+2; j++)
+            {
+                if(i> 0 && i < size - 1 && j > 0 && j < size - 1)
+                {
+                    if (i != this.getX() && j != this.getY() && M[i, j] == 0)
+                    {
+                        ind1 = i;
+                        ind2 = j;
+                        break;
+                    }
+                }
+
+            }
+        }
+
+        Debug.Log("ATTENTION VOICI LES INDICES : i " + ind1 + " - j " + ind2);
+        Component[] Grounds = GameObject.Find("MapManager").GetComponentsInChildren<Component>();
+        foreach (Component G in Grounds)
+        {
+            if (G.tag == "ground" && G.GetComponent<GroundPositions>().getX() == ind1 && G.GetComponent<GroundPositions>().getY() == ind2)
+            {
+                Transform T = G.transform;
+                T.gameObject.SetActive(false);
+                if (v == 0)
+                {
+                    M[ind1, ind2] = 7;
+                    GameObject go = (GameObject)Instantiate(well, T.position, T.rotation);
+                    go.transform.SetParent(GameObject.Find("MapManager").transform);
+                    haveWell = true;
+                }
+                else
+                {
+                    M[ind1, ind2] = 6;
+                    GameObject go = (GameObject)Instantiate(farm, T.position, T.rotation);
+                    go.transform.SetParent(GameObject.Find("MapManager").transform);
+                    haveFarm = true;
+                }
+
+                Destroy(G.gameObject);
+            }
+        }
+
+
+    }
 }

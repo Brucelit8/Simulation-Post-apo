@@ -14,6 +14,8 @@ public class Building : MonoBehaviour{
     protected int bandage;
     protected int scrap;
 
+    protected int X, Y;
+
     // Use this for initialization
     void Start () {
 
@@ -59,4 +61,18 @@ public class Building : MonoBehaviour{
         scrap = s;
     }
 
+    public void setXY(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public int getX()
+    {
+        return X;
+    }
+    public int getY()
+    {
+        return Y;
+    }
 }

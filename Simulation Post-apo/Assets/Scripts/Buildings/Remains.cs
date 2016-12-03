@@ -62,6 +62,8 @@ public class Remains : Building
         transform.gameObject.SetActive(false);
         GameObject go = (GameObject)Instantiate(ground, T.position, T.rotation);
         go.transform.SetParent(GameObject.Find("MapManager").transform);
+        go.GetComponent<GroundPositions>().setXY(this.GetComponent<GroundPositions>().getX(), this.GetComponent<GroundPositions>().getY());
         Destroy(gameObject);
+        GameObject.Find("MapManager").GetComponent<Map>().setValue(this.GetComponent<GroundPositions>().getX(), this.GetComponent<GroundPositions>().getY(), 0);
     }
 }

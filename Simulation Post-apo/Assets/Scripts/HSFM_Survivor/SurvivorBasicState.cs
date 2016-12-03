@@ -49,7 +49,7 @@ public class SurvivorBasicState : MonoBehaviour
         wayPointsList = new List<Vector3>();
 
         collectState = new CollectState(this);
-        //buildState = new BuildState();
+        buildState = new BuildState(this);
         nourrishState = new NourrishState(this);
         //fightState = new FightState();
         repairState = new RepairState(this);
@@ -109,12 +109,28 @@ public class SurvivorBasicState : MonoBehaviour
         {
             if (hit.collider.gameObject.tag == "House" || hit.collider.gameObject.tag == "Supermarket" || hit.collider.gameObject.tag == "Hospital")
             {
-                if (currentMap.GetComponent<Map>().getMap()[(int)destination.x + 1, (int)destination.z + 1] != 3
-                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x + 1, (int)destination.z + 1] != 4
-                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x + 1, (int)destination.z + 1] != 5)
-                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination);
+                int indiceX;
+                int indiceZ;
+
+                if (destination.x - (int)destination.x <= 0.5f)
+                    indiceX = (int)destination.x;
                 else
-                    moving = false;
+                    indiceX = (int)destination.x + 1;
+
+                if (destination.z - (int)destination.z <= 0.5f)
+                    indiceZ = (int)destination.z;
+                else
+                    indiceZ = (int)destination.z + 1;
+
+                if (currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 3
+                    && currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 4
+                    && currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 5)
+                {
+           //         Debug.Log(destination);
+           //         Debug.Log(indiceX + " " + indiceZ);
+           //         Debug.Log(currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ]);
+                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination);
+                }
             }
         }
     }

@@ -20,6 +20,8 @@ public class Map : MonoBehaviour {
         3 for the houses
         4 for hospitals
         5 for supermarket
+        6 for farm
+        7 for well
     */
 
     public int[,] getMap() { return map; }
@@ -75,6 +77,7 @@ public class Map : MonoBehaviour {
                 if (map[i, j] == 0)
                 {
                     GameObject go = (GameObject)Instantiate(ground, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
+                    go.GetComponent<GroundPositions>().setXY(i, j);
                     go.transform.SetParent(mapmanager);
                 }
                 else if (map[i, j] == 1)
@@ -85,11 +88,13 @@ public class Map : MonoBehaviour {
                 else if (map[i, j] == 2)
                 {
                     GameObject go = (GameObject)Instantiate(remain, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
+                    go.GetComponent<GroundPositions>().setXY(i, j);
                     go.transform.SetParent(mapmanager);
                 }
                 else if (map[i, j] == 3)
                 {
                     GameObject go = (GameObject)Instantiate(house, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
+                    go.GetComponent<House>().setXY(i, j);
                     go.transform.SetParent(mapmanager);
 
                     // building layer
@@ -100,6 +105,7 @@ public class Map : MonoBehaviour {
                 else if (map[i, j] == 4)
                 {
                     GameObject go = (GameObject)Instantiate(hospital, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
+                    go.GetComponent<Hospital>().setXY(i, j);
                     go.transform.SetParent(mapmanager);
 
                     // building layer
@@ -110,6 +116,7 @@ public class Map : MonoBehaviour {
                 else if (map[i, j] == 5)
                 {
                     GameObject go = (GameObject)Instantiate(supermarket, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
+                    go.GetComponent<Supermarket>().setXY(i, j);
                     go.transform.SetParent(mapmanager);
 
                     // building layer
@@ -388,5 +395,10 @@ public class Map : MonoBehaviour {
             }
         }
         return false;
+    }
+
+    public void setValue(int i, int j, int v)
+    {
+        map[i, j] = v;
     }
 }

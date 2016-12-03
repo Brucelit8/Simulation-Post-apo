@@ -35,8 +35,15 @@ public class HomeState : ISurvivor
         else if (survivor.home.GetComponent<House>().getSafety() < 10 && survivor.home.GetComponent<House>().getScrap() >= 3)
         {
             survivor.home.GetComponent<House>().setSign(2);
-            Debug.Log("REPARER");
+            Debug.Log("REPARO!");
             ToRepairState();
+        }
+
+        else if((!survivor.home.GetComponent<House>().haveWell || !survivor.home.GetComponent<House>().haveFarm) && survivor.home.GetComponent<House>().getScrap() >= 1)
+        {
+            survivor.home.GetComponent<House>().setSign(3);
+            Debug.Log("BUILDING");
+            ToBuildState();
         }
 
         else
@@ -54,7 +61,7 @@ public class HomeState : ISurvivor
 
     public void ToBuildState()
     {
-
+        survivor.currentState = survivor.buildState;
     }
 
     public void ToCollectState()
