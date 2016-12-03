@@ -63,6 +63,7 @@ public class CollectState : ISurvivor
 
             point = new Vector3(rX, survivor.transform.position.y, rZ);
 
+            // CHECK WALL 1
             if (Physics.Linecast(new Vector3(survivor.transform.position.x, survivor.transform.position.y + 0.2f, survivor.transform.position.z),
                 new Vector3(point.x, point.y + 0.2f, point.z), out hit))
             {
@@ -77,10 +78,16 @@ public class CollectState : ISurvivor
                 }
             }
 
-            moving = true;
-            lastPointReached = false;
-            survivor.checkBuildingHit(point, moving);
-            survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, point);
+            //CHECK WALL 2
+            if (point.x <= 0 || point.x >= survivor.currentMap.GetComponent<Map>().size - 1 || point.z <= 0 || point.z >= survivor.currentMap.GetComponent<Map>().size - 1)
+                moving = false;
+            else
+            {
+                moving = true;
+                lastPointReached = false;
+                survivor.checkBuildingHit(point, moving);
+                survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, point);
+            }
         }
         else
         {
@@ -121,54 +128,56 @@ public class CollectState : ISurvivor
                 {
                     survivor.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
-                    //COLLECTING FOOD
-                    if (survivor.survivorFood + 1 <= 3 && buildingCollected.GetComponent<Building>().getFood() > 0)
+                    if (buildingCollected != null)
                     {
-                        survivor.survivorFood += 1;
-                        buildingCollected.GetComponent<Building>().setFood(buildingCollected.GetComponent<Building>().getFood() - 1);
-                        string s = buildingCollected.tag;
-                        if ((buildingCollected.GetComponent(s) as Building).selected)
+                        //COLLECTING FOOD
+                        if (survivor.survivorFood + 1 <= 3 && buildingCollected.GetComponent<Building>().getFood() > 0)
                         {
-                            (buildingCollected.GetComponent(s) as Building).Details();
+                            survivor.survivorFood += 1;
+                            buildingCollected.GetComponent<Building>().setFood(buildingCollected.GetComponent<Building>().getFood() - 1);
+                            string s = buildingCollected.tag;
+                            if ((buildingCollected.GetComponent(s) as Building).selected)
+                            {
+                                (buildingCollected.GetComponent(s) as Building).Details();
+                            }
+                        }
+
+                        //COLLECTING WATER
+                        if (survivor.survivorWater + 1 <= 3 && buildingCollected.GetComponent<Building>().getWater() > 0)
+                        {
+                            survivor.survivorWater += 1;
+                            buildingCollected.GetComponent<Building>().setWater(buildingCollected.GetComponent<Building>().getWater() - 1);
+                            string s = buildingCollected.tag;
+                            if ((buildingCollected.GetComponent(s) as Building).selected)
+                            {
+                                (buildingCollected.GetComponent(s) as Building).Details();
+                            }
+                        }
+
+                        //COLLECTING BANDAGE
+                        if (survivor.survivorBandage + 1 <= 3 && buildingCollected.GetComponent<Building>().getBandage() > 0)
+                        {
+                            survivor.survivorBandage += 1;
+                            buildingCollected.GetComponent<Building>().setBandage(buildingCollected.GetComponent<Building>().getBandage() - 1);
+                            string s = buildingCollected.tag;
+                            if ((buildingCollected.GetComponent(s) as Building).selected)
+                            {
+                                (buildingCollected.GetComponent(s) as Building).Details();
+                            }
+                        }
+
+                        //COLLECTING SCRAP
+                        if (survivor.survivorScrap + 1 <= 3 && buildingCollected.GetComponent<Building>().getScrap() > 0)
+                        {
+                            survivor.survivorScrap += 1;
+                            buildingCollected.GetComponent<Building>().setScrap(buildingCollected.GetComponent<Building>().getScrap() - 1);
+                            string s = buildingCollected.tag;
+                            if ((buildingCollected.GetComponent(s) as Building).selected)
+                            {
+                                (buildingCollected.GetComponent(s) as Building).Details();
+                            }
                         }
                     }
-
-                    //COLLECTING WATER
-                    if (survivor.survivorWater + 1 <= 3 && buildingCollected.GetComponent<Building>().getWater() > 0)
-                    {
-                        survivor.survivorWater += 1;
-                        buildingCollected.GetComponent<Building>().setWater(buildingCollected.GetComponent<Building>().getWater() - 1);
-                        string s = buildingCollected.tag;
-                        if ((buildingCollected.GetComponent(s) as Building).selected)
-                        {
-                            (buildingCollected.GetComponent(s) as Building).Details();
-                        }
-                    }
-
-                    //COLLECTING BANDAGE
-                    if (survivor.survivorBandage + 1 <= 3 && buildingCollected.GetComponent<Building>().getBandage() > 0)
-                    {
-                        survivor.survivorBandage += 1;
-                        buildingCollected.GetComponent<Building>().setBandage(buildingCollected.GetComponent<Building>().getBandage() - 1);
-                        string s = buildingCollected.tag;
-                        if ((buildingCollected.GetComponent(s) as Building).selected)
-                        {
-                            (buildingCollected.GetComponent(s) as Building).Details();
-                        }
-                    }
-
-                    //COLLECTING SCRAP
-                    if (survivor.survivorScrap + 1 <= 3 && buildingCollected.GetComponent<Building>().getScrap() > 0)
-                    {
-                        survivor.survivorScrap += 1;
-                        buildingCollected.GetComponent<Building>().setScrap(buildingCollected.GetComponent<Building>().getScrap() - 1);
-                        string s = buildingCollected.tag;
-                        if ((buildingCollected.GetComponent(s) as Building).selected)
-                        {
-                            (buildingCollected.GetComponent(s) as Building).Details();
-                        }
-                    }
-
 
                     if (survivor.survivorFood == 3 || survivor.survivorWater == 3 || survivor.survivorBandage == 3 || survivor.survivorScrap == 3)
                     {

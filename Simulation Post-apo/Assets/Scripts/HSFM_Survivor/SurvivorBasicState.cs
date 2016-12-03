@@ -31,6 +31,8 @@ public class SurvivorBasicState : MonoBehaviour
     float survivorHealth;
     float survivorTiredness;
 
+    public GameObject currentMap;
+
     void Awake()
     {
         homeSet = false;
@@ -53,6 +55,8 @@ public class SurvivorBasicState : MonoBehaviour
         repairState = new RepairState(this);
         sleepState = new SleepState(this);
         homeState = new HomeState(this);
+
+        currentMap = GameObject.Find("Map");
     }
 
     // Use this for initialization
@@ -64,7 +68,11 @@ public class SurvivorBasicState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("State " + currentState.ToString());
+        //Debug.Log("State " + currentState.ToString());
+        Debug.Log("#### LIST ###");
+        Debug.Log(currentState.ToString());
+        foreach (Vector3 v in wayPointsList)
+            Debug.Log(v);
         currentState.UpdateState();
     }
 
@@ -101,11 +109,11 @@ public class SurvivorBasicState : MonoBehaviour
         {
             if (hit.collider.gameObject.tag == "House" || hit.collider.gameObject.tag == "Supermarket" || hit.collider.gameObject.tag == "Hospital")
             {
-                BoxCollider b = hit.collider.gameObject.GetComponent<BoxCollider>();
-
-                if (!b.bounds.Contains(new Vector3(destination.x, destination.y + 0.2f, destination.z)))
+                if (currentMap.GetComponent<Map>().getMap()[(int)destination.x, (int)destination.z] != 3
+                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x, (int)destination.z] != 4
+                    || currentMap.GetComponent<Map>().getMap()[(int)destination.x, (int)destination.z] != 5)
                     getAroundBuilding(this.transform.position, hit.collider.gameObject, destination);
-                else if (hit.collider.gameObject != home)
+                else
                     moving = false;
             }
         }
@@ -130,9 +138,9 @@ public class SurvivorBasicState : MonoBehaviour
             determinePath(buildingNodeList, destPos, survivorPos, false);
         }
 
-        Debug.Log("#### LIST ###");
+        /*Debug.Log("#### LIST ###");
         foreach (Vector3 v in wayPointsList)
-            Debug.Log(v);
+            Debug.Log(v);*/
     }
 
     void determinePath(List<Vector3> nodeList, Vector3 destination, Vector3 survivorPos, bool exitReached)
@@ -155,10 +163,10 @@ public class SurvivorBasicState : MonoBehaviour
                         reachableNodes.Add(n);
                 }
             }
-
+            /*
             Debug.Log("### NODES REACHABLES ###");
             Debug.Log(reachableNodes.Count);
-
+            */
             if (reachableNodes.Count > 0)
             {
                 Vector3 bestOption = reachableNodes[0];
@@ -167,9 +175,6 @@ public class SurvivorBasicState : MonoBehaviour
                 {
                     foreach (Vector3 v in reachableNodes)
                     {
-                        Debug.Log("#### CHECK DISTANCE ###");
-                        Debug.Log(destination + " " + v + " " + bestOption);
-                        Debug.Log(Vector3.Distance(bestOption, destination) + " " + Vector3.Distance(v, destination));
                         if (Vector3.Distance(bestOption, destination) > Vector3.Distance(v, destination))
                             bestOption = v;
                     }
@@ -189,9 +194,8 @@ public class SurvivorBasicState : MonoBehaviour
                 {
                     if (nodeList.Count <= 1)
                     {
-                        if (h.collider.gameObject.tag != "Node" && h.collider.gameObject != home)
+                        if (h.collider.gameObject.tag != "Node")
                         {
-                            Debug.Log("Second batiment " + h.collider.gameObject);
                             getAroundBuilding(new Vector3(bestOption.x, transform.position.y, bestOption.z), h.collider.gameObject, destination);
                             exitReached = true;
                         }
