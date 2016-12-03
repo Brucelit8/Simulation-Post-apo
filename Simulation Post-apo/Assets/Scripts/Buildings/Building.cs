@@ -34,7 +34,19 @@ public class Building : MonoBehaviour{
         food = f;
         Details();
     }
+
     public int getWater() { return water; }
+    public void setWater(int w)
+    {
+        water = w;
+        Details();
+    }
+
     public int getBandage() { return bandage; }
+    public void setBandage(int b)
+    {
+        bandage = b;
+        Details();
+    }
 
 }

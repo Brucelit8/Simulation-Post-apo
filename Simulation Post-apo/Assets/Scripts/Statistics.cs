@@ -2,7 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class Statistics : MonoBehaviour {
+public class Statistics : MonoBehaviour
+{
 
     // Use this for initialization
 
@@ -14,18 +15,18 @@ public class Statistics : MonoBehaviour {
     public bool selected = false;
     public bool changed = false;
 
-	void Start ()
+    void Start()
     {
-        health = 100.0f;
-        thirst = 80.0f;
-        tiredness = 70.0f;
-        hunger = 50.0f;
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        health = this.GetComponent<SurvivorBasicState>().getSurvivorHealth();
+        thirst = this.GetComponent<SurvivorBasicState>().getSurvivorThirst();
+        tiredness = this.GetComponent<SurvivorBasicState>().getSurvivorTiredness();
+        hunger = this.GetComponent<SurvivorBasicState>().getSurvivorHunger();
+    }
+
+    // Update is called once per frame
+    void Update()
     {
-        if(changed)
+        if (changed)
         {
             if (selected)
             {
@@ -62,29 +63,41 @@ public class Statistics : MonoBehaviour {
             changed = false;
         }
 
-        if(selected)
+        if (selected)
         {
-            VariablesUI.a_tiredness = tiredness;
-            VariablesUI.a_thirst = thirst;
-            VariablesUI.a_hunger = hunger;
-            VariablesUI.a_health = health;
+            VariablesUI.a_tiredness = this.GetComponent<SurvivorBasicState>().getSurvivorTiredness();
+            VariablesUI.a_thirst = this.GetComponent<SurvivorBasicState>().getSurvivorThirst();
+            VariablesUI.a_hunger = this.GetComponent<SurvivorBasicState>().getSurvivorHunger();
+            VariablesUI.a_health = this.GetComponent<SurvivorBasicState>().getSurvivorHealth();
         }
 
-        health -= 0.05f;
+        //health -= 0.05f;
 
-        if(hunger == 0.0f)
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorHunger() - 0.02f > 0)
         {
-            health -= 0.2f;
+            this.GetComponent<SurvivorBasicState>().setSurvivorHunger(this.GetComponent<SurvivorBasicState>().getSurvivorHunger() - 0.02f);
+        }
+        else
+            this.GetComponent<SurvivorBasicState>().setSurvivorHunger(0);
+
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorThirst() - 0.02f > 0)
+            this.GetComponent<SurvivorBasicState>().setSurvivorThirst(this.GetComponent<SurvivorBasicState>().getSurvivorThirst() - 0.02f);
+        else
+            this.GetComponent<SurvivorBasicState>().setSurvivorThirst(0);
+
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorHunger() == 0.0f)
+        {
+            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.2f);
         }
 
-        if(thirst == 0.0f)
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorThirst() == 0.0f)
         {
-            health -= 0.5f;
+            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.5f);
         }
 
-	    if(health <= 0.0f)
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorHealth() <= 0.0f)
         {
             Destroy(gameObject);
         }
-	}
+    }
 }

@@ -12,8 +12,8 @@ public class House : Building {
 
         safety = (int)Random.Range(0f, 10f);
         bed = (int)Random.Range(2f, 10f);
-        water = (int)Random.Range(0f, 10f);
-        food = (int)Random.Range(0f, 10f);
+        water = (int)Random.Range(5f, 12f);
+        food = (int)Random.Range(5f, 12f);
         bandage = (int)Random.Range(1f, 3f);
 
         availableBeds = bed;

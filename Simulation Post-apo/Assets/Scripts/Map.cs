@@ -360,11 +360,11 @@ public class Map : MonoBehaviour {
         n.name = name;
         //n.gameObject.transform.parent = parent.gameObject.transform;
         n.gameObject.transform.SetParent(parent.transform);
-        n.transform.position = new Vector3(parent.gameObject.transform.localPosition.x + xParity, parent.gameObject.transform.localPosition.y,
-           parent.gameObject.transform.localPosition.z + zParity);
         n.AddComponent<BoxCollider>();
         n.GetComponent<BoxCollider>().isTrigger = true;
         n.GetComponent<BoxCollider>().size *= 0.2f;
+        n.transform.position = new Vector3(parent.gameObject.transform.localPosition.x + xParity, parent.gameObject.transform.localPosition.y,
+           parent.gameObject.transform.localPosition.z + zParity);
 
         // Node layer
         n.layer = 10;
