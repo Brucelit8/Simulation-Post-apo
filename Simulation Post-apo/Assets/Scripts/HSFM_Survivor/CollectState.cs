@@ -126,6 +126,11 @@ public class CollectState : ISurvivor
                     {
                         survivor.survivorFood += 1;
                         buildingCollected.GetComponent<Building>().setFood(buildingCollected.GetComponent<Building>().getFood() - 1);
+                        string s = buildingCollected.tag;
+                        if ((buildingCollected.GetComponent(s) as Building).selected)
+                        {
+                            (buildingCollected.GetComponent(s) as Building).Details();
+                        }
                     }
 
                     //COLLECTING WATER
@@ -133,6 +138,11 @@ public class CollectState : ISurvivor
                     {
                         survivor.survivorWater += 1;
                         buildingCollected.GetComponent<Building>().setWater(buildingCollected.GetComponent<Building>().getWater() - 1);
+                        string s = buildingCollected.tag;
+                        if ((buildingCollected.GetComponent(s) as Building).selected)
+                        {
+                            (buildingCollected.GetComponent(s) as Building).Details();
+                        }
                     }
 
                     //COLLECTING BANDAGE
@@ -140,9 +150,27 @@ public class CollectState : ISurvivor
                     {
                         survivor.survivorBandage += 1;
                         buildingCollected.GetComponent<Building>().setBandage(buildingCollected.GetComponent<Building>().getBandage() - 1);
+                        string s = buildingCollected.tag;
+                        if ((buildingCollected.GetComponent(s) as Building).selected)
+                        {
+                            (buildingCollected.GetComponent(s) as Building).Details();
+                        }
                     }
 
-                    if (survivor.survivorFood == 3 || survivor.survivorWater == 3 || survivor.survivorBandage == 3)
+                    //COLLECTING SCRAP
+                    if (survivor.survivorScrap + 1 <= 3 && buildingCollected.GetComponent<Building>().getScrap() > 0)
+                    {
+                        survivor.survivorScrap += 1;
+                        buildingCollected.GetComponent<Building>().setScrap(buildingCollected.GetComponent<Building>().getScrap() - 1);
+                        string s = buildingCollected.tag;
+                        if ((buildingCollected.GetComponent(s) as Building).selected)
+                        {
+                            (buildingCollected.GetComponent(s) as Building).Details();
+                        }
+                    }
+
+
+                    if (survivor.survivorFood == 3 || survivor.survivorWater == 3 || survivor.survivorBandage == 3 || survivor.survivorScrap == 3)
                     {
                         if (survivor.homeSet)
                         {
@@ -192,10 +220,20 @@ public class CollectState : ISurvivor
                         survivor.survivorWater = 0;
                         survivor.home.GetComponent<House>().setWater(survivor.home.GetComponent<House>().getBandage() + survivor.survivorBandage);
                         survivor.survivorBandage = 0;
+                        survivor.home.GetComponent<House>().setWater(survivor.home.GetComponent<House>().getScrap() + survivor.survivorScrap);
+                        survivor.survivorScrap = 0;
+
+                        if(survivor.home.GetComponent<House>().selected)
+                        {
+                            survivor.home.GetComponent<House>().Details();
+                        }
 
                         goingHome = false;
                         roadHomeSet = false;
                         moving = false;
+
+                        ToHomeState();
+
                     }
                     else
                     {
@@ -247,6 +285,21 @@ public class CollectState : ISurvivor
 
     }
 
+    public void ToHomeState()
+    {
+        survivor.currentState = survivor.homeState;
+    }
+
+    public void ToRepairState()
+    {
+
+    }
+
+        public void ToSleepState()
+    {
+        survivor.currentState = survivor.sleepState;
+    }
+
     public void OnTriggerEnter(Collider other)
     {
         if (!goingHome && !collectingRessources)
@@ -272,7 +325,7 @@ public class CollectState : ISurvivor
             }
 
             //GETTING RESSOURCES FROM OTHER BUILDINGS
-            else if (other.gameObject.tag == "Supermarket" || other.gameObject.tag == "Hospital")
+            else if (other.gameObject.tag == "Supermarket" || other.gameObject.tag == "Hospital" || other.gameObject.tag == "Remains")
             {
                 buildingCollected = other.gameObject;
                 collectingRessources = true;

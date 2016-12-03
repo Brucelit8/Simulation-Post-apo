@@ -11,6 +11,7 @@ public class Supermarket : Building {
         water = (int)Random.Range(5f, 20f);
         food = (int)Random.Range(5f, 20f);
         bandage = (int)Random.Range(2f, 5f);
+        scrap = (int)Random.Range(1f, 5f);
     }
 
     // Update is called once per frame
@@ -44,7 +45,7 @@ public class Supermarket : Building {
         VariablesUI.t_water.text = "Water : " + water;
         VariablesUI.t_food.text = "Food : " + food;
         VariablesUI.t_bandage.text = "Bandage : " + bandage;
-
+        VariablesUI.t_scrap.text = "Scrap : " + scrap;
     }
 
 }

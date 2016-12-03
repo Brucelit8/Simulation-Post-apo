@@ -14,10 +14,14 @@ public class SurvivorBasicState : MonoBehaviour
     public BuildState buildState;
     public NourrishState nourrishState;
     public FightState fightState;
+    public RepairState repairState;
+    public HomeState homeState;
+    public SleepState sleepState;
 
     public int survivorFood;
     public int survivorWater;
     public int survivorBandage;
+    public int survivorScrap;
 
     public GameObject home;
     public bool homeSet;
@@ -33,6 +37,7 @@ public class SurvivorBasicState : MonoBehaviour
         survivorFood = 0;
         survivorWater = 0;
         survivorBandage = 0;
+        survivorScrap = 0;
 
         survivorHealth = 100;
         survivorHunger = 90;
@@ -45,6 +50,9 @@ public class SurvivorBasicState : MonoBehaviour
         //buildState = new BuildState();
         nourrishState = new NourrishState(this);
         //fightState = new FightState();
+        repairState = new RepairState(this);
+        sleepState = new SleepState(this);
+        homeState = new HomeState(this);
     }
 
     // Use this for initialization
@@ -56,6 +64,7 @@ public class SurvivorBasicState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("State " + currentState.ToString());
         currentState.UpdateState();
     }
 

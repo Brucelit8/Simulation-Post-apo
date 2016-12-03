@@ -14,4 +14,8 @@ public interface ISurvivor {
     void ToCollectState();
 
     void ToFightState();
+
+    void ToHomeState();
+
+    void ToRepairState();
 }

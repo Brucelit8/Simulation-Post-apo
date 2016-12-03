@@ -30,7 +30,6 @@ public class Statistics : MonoBehaviour
         {
             if (selected)
             {
-                Debug.Log("Coucou la selection");
 
                 string s = "Materials/Cha_Knight-Face_s";
 
@@ -42,6 +41,17 @@ public class Statistics : MonoBehaviour
                         Material[] mats = r.GetComponent<Renderer>().materials;
                         mats[0] = Resources.Load(s, typeof(Material)) as Material;
                         r.GetComponent<SkinnedMeshRenderer>().materials = mats;
+                    }
+                }
+
+                if(GetComponent<SurvivorBasicState>().homeSet)
+                {
+                    if(!GetComponent<SurvivorBasicState>().home.GetComponent<House>().selected)
+                    {
+                        string n = "Materials/House_3_s2";
+                        Material[] mats = GetComponent<SurvivorBasicState>().home.GetComponent<Renderer>().materials;
+                        mats[0] = Resources.Load(n, typeof(Material)) as Material;
+                        GetComponent<SurvivorBasicState>().home.GetComponent<MeshRenderer>().materials = mats;
                     }
                 }
             }
@@ -59,6 +69,17 @@ public class Statistics : MonoBehaviour
                         r.GetComponent<SkinnedMeshRenderer>().materials = mats;
                     }
                 }
+
+                if (GetComponent<SurvivorBasicState>().homeSet)
+                {
+                    if (!GetComponent<SurvivorBasicState>().home.GetComponent<House>().selected)
+                    {
+                        string n = "Materials/House_3_s";
+                        Material[] mats = GetComponent<SurvivorBasicState>().home.GetComponent<Renderer>().materials;
+                        mats[0] = Resources.Load(n, typeof(Material)) as Material;
+                        GetComponent<SurvivorBasicState>().home.GetComponent<MeshRenderer>().materials = mats;
+                    }
+                }
             }
             changed = false;
         }
@@ -71,28 +92,32 @@ public class Statistics : MonoBehaviour
             VariablesUI.a_health = this.GetComponent<SurvivorBasicState>().getSurvivorHealth();
         }
 
-        //health -= 0.05f;
 
         if (this.GetComponent<SurvivorBasicState>().getSurvivorHunger() - 0.02f > 0)
         {
-            this.GetComponent<SurvivorBasicState>().setSurvivorHunger(this.GetComponent<SurvivorBasicState>().getSurvivorHunger() - 0.02f);
+            this.GetComponent<SurvivorBasicState>().setSurvivorHunger(this.GetComponent<SurvivorBasicState>().getSurvivorHunger() - 0.02f * Time.timeScale);
         }
         else
             this.GetComponent<SurvivorBasicState>().setSurvivorHunger(0);
 
-        if (this.GetComponent<SurvivorBasicState>().getSurvivorThirst() - 0.02f > 0)
-            this.GetComponent<SurvivorBasicState>().setSurvivorThirst(this.GetComponent<SurvivorBasicState>().getSurvivorThirst() - 0.02f);
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorThirst() - 0.03f > 0)
+            this.GetComponent<SurvivorBasicState>().setSurvivorThirst(this.GetComponent<SurvivorBasicState>().getSurvivorThirst() - 0.03f * Time.timeScale);
         else
             this.GetComponent<SurvivorBasicState>().setSurvivorThirst(0);
 
+        if (this.GetComponent<SurvivorBasicState>().getSurvivorTiredness() - 0.01f > 0)
+            this.GetComponent<SurvivorBasicState>().setSurvivorTiredness(this.GetComponent<SurvivorBasicState>().getSurvivorTiredness() - 0.01f * Time.timeScale);
+        else
+            this.GetComponent<SurvivorBasicState>().setSurvivorTiredness(0);
+
         if (this.GetComponent<SurvivorBasicState>().getSurvivorHunger() == 0.0f)
         {
-            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.2f);
+            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.2f * Time.timeScale);
         }
 
         if (this.GetComponent<SurvivorBasicState>().getSurvivorThirst() == 0.0f)
         {
-            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.5f);
+            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.5f * Time.timeScale);
         }
 
         if (this.GetComponent<SurvivorBasicState>().getSurvivorHealth() <= 0.0f)

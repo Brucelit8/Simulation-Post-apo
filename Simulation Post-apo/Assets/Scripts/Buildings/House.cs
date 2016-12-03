@@ -10,11 +10,12 @@ public class House : Building {
     // Use this for initialization
     void Start () {
 
-        safety = (int)Random.Range(0f, 10f);
+        safety = (int)Random.Range(0f, 5.0f);
         bed = (int)Random.Range(2f, 10f);
         water = (int)Random.Range(5f, 12f);
         food = (int)Random.Range(5f, 12f);
         bandage = (int)Random.Range(1f, 3f);
+        scrap = (int)Random.Range(1f, 5f);
 
         availableBeds = bed;
         maxBeds = availableBeds;
@@ -51,6 +52,7 @@ public class House : Building {
         VariablesUI.t_water.text = "Water : " + water;
         VariablesUI.t_food.text = "Food : " + food;
         VariablesUI.t_bandage.text = "Bandage : " + bandage;
+        VariablesUI.t_scrap.text = "Scrap : " + scrap;
 
     }
 

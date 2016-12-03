@@ -12,6 +12,7 @@ public class Building : MonoBehaviour{
     protected int water;
     protected int food;
     protected int bandage;
+    protected int scrap;
 
     // Use this for initialization
     void Start () {
@@ -28,25 +29,34 @@ public class Building : MonoBehaviour{
 
     public virtual void Details() { }
 
+    public int getSafety() { return safety; }
+    public void setSafety(int s)
+    {
+        safety = s;
+    }
+
     public int getFood() { return food; }
     public void setFood(int f)
     {
         food = f;
-        Details();
     }
 
     public int getWater() { return water; }
     public void setWater(int w)
     {
         water = w;
-        Details();
     }
 
     public int getBandage() { return bandage; }
     public void setBandage(int b)
     {
         bandage = b;
-        Details();
+    }
+
+    public int getScrap() { return scrap; }
+    public void setScrap(int s)
+    {
+        scrap = s;
     }
 
 }

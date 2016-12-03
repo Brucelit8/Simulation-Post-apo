@@ -8,12 +8,7 @@ public class VariablesUI : MonoBehaviour {
 
     public static float a_thirst, a_tiredness, a_hunger, a_health;
 
-    public static Text t_type;
-    public static Text t_safety;
-    public static Text t_bed;
-    public static Text t_water;
-    public static Text t_food;
-    public static Text t_bandage;
+    public static Text t_type, t_safety, t_bed, t_water, t_food, t_bandage, t_scrap;
 
     static VariablesUI instance;
     // Use this for initialization
@@ -39,6 +34,7 @@ public class VariablesUI : MonoBehaviour {
         t_water = GameObject.Find("Water").GetComponent<Text>();
         t_food = GameObject.Find("Food").GetComponent<Text>();
         t_bandage = GameObject.Find("Bandage").GetComponent<Text>();
+        t_scrap = GameObject.Find("Scrap").GetComponent<Text>();
 
         th_slider = GameObject.Find("Thirst Slider").GetComponent<Slider>();
         t_slider = GameObject.Find("Tiredness Slider").GetComponent<Slider>();

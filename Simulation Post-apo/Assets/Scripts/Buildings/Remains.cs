@@ -5,7 +5,6 @@ using System.Collections;
 public class Remains : Building
 {
     public GameObject ground;
-    public bool lol = false;
     // Use this for initialization
     void Start()
     {
@@ -14,17 +13,13 @@ public class Remains : Building
         water = (int)Random.Range(0f, 3f);
         food = (int)Random.Range(0f, 3f);
         bandage = (int)Random.Range(0f, 1.5f);
+        scrap = (int)Random.Range(0f, 5f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(lol)
-        {
-            water = 0;
-            food = 0;
-            bandage = 0;
-        }
+
         if(water == 0 && food == 0 && bandage == 0)
         {
             switchToGround();
@@ -58,6 +53,7 @@ public class Remains : Building
         VariablesUI.t_water.text = "Water : " + water;
         VariablesUI.t_food.text = "Food : " + food;
         VariablesUI.t_bandage.text = "Bandage : " + bandage;
+        VariablesUI.t_scrap.text = "Scrap : " + scrap;
     }
 
     void switchToGround()

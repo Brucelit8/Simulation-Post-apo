@@ -115,4 +115,19 @@ public class NourrishState : ISurvivor
     {
 
     }
+
+    public void ToHomeState()
+    {
+
+    }
+
+    public void ToRepairState()
+    {
+
+    }
+
+    public void ToSleepState()
+    {
+        survivor.currentState = survivor.sleepState;
+    }
 }
