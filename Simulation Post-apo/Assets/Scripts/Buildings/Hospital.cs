@@ -50,4 +50,28 @@ public class Hospital : Building {
 
     }
 
+    public override void DeselectAllOthers()
+    {
+        GameObject M = GameObject.Find("MapManager");
+
+        foreach (Transform child in M.transform)
+        {
+            GameObject G = child.gameObject;
+            if (G.tag == "House" || G.tag == "Supermarket" || G.tag == "Hospital" || G.tag == "Remains")
+            {
+                string s = G.tag;
+                string here = this.gameObject.tag;
+                int x1 = (GetComponent(here) as Building).getX();
+                int x2 = (G.GetComponent(s) as Building).getX();
+                int y1 = (GetComponent(here) as Building).getY();
+                int y2 = (G.GetComponent(s) as Building).getY();
+
+                if (x1 != x2 || y1 != y2)
+                {
+                    (G.GetComponent(s) as Building).changed = true;
+                    (G.GetComponent(s) as Building).selected = false;
+                }
+            }
+        }
+    }
 }

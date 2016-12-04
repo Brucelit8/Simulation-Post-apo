@@ -48,6 +48,7 @@ public class RepairState : ISurvivor
         {
             isRepairing = false;
             endRepairing = false;
+            survivor.home.GetComponent<House>().setSign(0);
             ToHomeState();
         }
     }

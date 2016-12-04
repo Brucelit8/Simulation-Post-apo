@@ -78,7 +78,7 @@ public class Statistics : MonoBehaviour
                 {
                     if (!GetComponent<SurvivorBasicState>().home.GetComponent<House>().selected)
                     {
-                        string n = "Materials/House_3_s";
+                        string n = "Materials/House_3";
                         Material[] mats = GetComponent<SurvivorBasicState>().home.GetComponent<Renderer>().materials;
                         mats[0] = Resources.Load(n, typeof(Material)) as Material;
                         GetComponent<SurvivorBasicState>().home.GetComponent<MeshRenderer>().materials = mats;
@@ -147,7 +147,20 @@ public class Statistics : MonoBehaviour
                 }
             }
         }
+    }
 
+    public void DeselectAllOthers()
+    {
+       GameObject M = GameObject.Find("AgentManager");
 
+        foreach ( Transform child in M.transform)
+        {
+            GameObject G = child.gameObject;
+            if(GetComponent<SurvivorBasicState>().getID() != G.GetComponent<SurvivorBasicState>().getID())
+            {
+                G.GetComponent<Statistics>().changed = true;
+                G.GetComponent<Statistics>().selected = false;
+            }
+        }
     }
 }

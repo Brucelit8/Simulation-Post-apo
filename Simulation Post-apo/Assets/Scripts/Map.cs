@@ -88,7 +88,7 @@ public class Map : MonoBehaviour {
                 else if (map[i, j] == 2)
                 {
                     GameObject go = (GameObject)Instantiate(remain, new Vector3((float)i * ratio, 0, (float)j * ratio), Quaternion.identity);
-                    go.GetComponent<GroundPositions>().setXY(i, j);
+                    go.GetComponent<Remains>().setXY(i, j);
                     go.transform.SetParent(mapmanager);
                 }
                 else if (map[i, j] == 3)

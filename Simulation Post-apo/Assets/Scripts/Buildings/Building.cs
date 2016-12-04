@@ -75,4 +75,9 @@ public class Building : MonoBehaviour{
     {
         return Y;
     }
+
+    public virtual void DeselectAllOthers()
+    {
+ 
+    }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class SurvivorBasicState : MonoBehaviour
 {
-
+    private int ID;
     public float speed = 2.3f;
     public Vector3 direction;
     List<Vector3> wayPointsList;
@@ -68,11 +68,6 @@ public class SurvivorBasicState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("State " + currentState.ToString());
-        Debug.Log("#### LIST ###");
-        Debug.Log(currentState.ToString());
-        foreach (Vector3 v in wayPointsList)
-            Debug.Log(v);
         currentState.UpdateState();
     }
 
@@ -81,11 +76,13 @@ public class SurvivorBasicState : MonoBehaviour
         currentState.OnTriggerEnter(other);
     }
 
+    public int getID() { return ID; }
     public float getSurvivorHealth() { return survivorHealth; }
     public float getSurvivorHunger() { return survivorHunger; }
     public float getSurvivorThirst() { return survivorThirst; }
     public float getSurvivorTiredness() { return survivorTiredness; }
 
+    public void setID(int i) { ID = i; }
     public void setSurvivorHealth(float h) { survivorHealth = h; }
     public void setSurvivorHunger(float h) { survivorHunger = h; }
     public void setSurvivorThirst(float t) { survivorThirst = t; }
@@ -105,7 +102,8 @@ public class SurvivorBasicState : MonoBehaviour
         layerM = ~layerM;
         RaycastHit hit;
 
-        if (Physics.Linecast(this.transform.position, destination, out hit, layerM))
+        if (Physics.Linecast(new Vector3(this.transform.position.x, this.transform.position.y + 0.15f, this.transform.position.z),
+                    new Vector3(destination.x, destination.y + 0.15f, destination.z), out hit, layerM))
         {
             if (ignoringDestination)
             {
@@ -118,26 +116,13 @@ public class SurvivorBasicState : MonoBehaviour
             }
             else
             {
-                int indiceX;
-                int indiceZ;
+                float indiceMaxX = hit.collider.bounds.max.x + 0.05f;
+                float indiceMinX = hit.collider.bounds.min.x - 0.05f;
+                float indiceMaxZ = hit.collider.bounds.max.z + 0.05f;
+                float indiceMinZ = hit.collider.bounds.min.z - 0.05f;
 
-                if (destination.x - (int)destination.x <= 0.5f)
-                    indiceX = (int)destination.x;
-                else
-                    indiceX = (int)destination.x + 1;
-
-                if (destination.z - (int)destination.z <= 0.5f)
-                    indiceZ = (int)destination.z;
-                else
-                    indiceZ = (int)destination.z + 1;
-
-                if (currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 3
-                    && currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 4
-                    && currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 5)
+                if ((destination.x > indiceMaxX || destination.x < indiceMinX) || (destination.z > indiceMaxZ || destination.z < indiceMinZ))
                 {
-                    /*Debug.Log(destination);
-                    Debug.Log(indiceX + " " + indiceZ);
-                    Debug.Log(currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ]);*/
                     getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
                     wayPointsList.Insert(wayPointsList.Count, destination);
                 }
@@ -214,25 +199,25 @@ public class SurvivorBasicState : MonoBehaviour
                 foreach (Vector3 n in reachableNodes)
                     nodeList.Remove(n);
 
-                if (!Physics.Linecast(new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), destination, out h, layerM))
+                if (Physics.Linecast(new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), destination, out h, layerM))
                 {
-                    exitReached = true;
+                    if (destBuilding != null && h.collider.gameObject == destBuilding)
+                        exitReached = true;
+                    else
+                    {
+                        if (nodeList.Count <= 1)
+                        {
+                            if (h.collider.gameObject.tag != "Node")
+                            {
+                                getAroundBuilding(new Vector3(bestOption.x, transform.position.y, bestOption.z), h.collider.gameObject, destination, destBuilding);
+                            }
+                        }
+                    }
                 }
 
                 else
                 {
-                    if (nodeList.Count <= 1)
-                    {
-                        if (h.collider.gameObject.tag != "Node")
-                        {
-                            if (destBuilding != null)
-                                checkBuildingHit(destination, destBuilding, true, false);
-                            else
-                                checkBuildingHit(destination, destBuilding, true, true);
-                            //getAroundBuilding(new Vector3(bestOption.x, transform.position.y, bestOption.z), h.collider.gameObject, destination);
-                            exitReached = true;
-                        }
-                    }
+                    exitReached = true;
                 }
 
                 determinePath(nodeList, destination, new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), exitReached, destBuilding);

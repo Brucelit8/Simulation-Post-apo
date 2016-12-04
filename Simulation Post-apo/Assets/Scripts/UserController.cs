@@ -4,7 +4,6 @@ using System.Collections;
 public class UserController : MonoBehaviour {
 
     GameObject Selected;
-    private bool firstSelect = false;
     private string typeSelect;
 	// Use this for initialization
 	void Start () {
@@ -20,39 +19,23 @@ public class UserController : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100))
             {
-                if(firstSelect)
-                {
-                    if(!(Selected == null))
-                    {
-                        if (Selected.GetComponent<Collider>().tag == "Agent")
-                        {
-                            Selected.GetComponent<Statistics>().changed = true;
-                            Selected.GetComponent<Statistics>().selected = false;
-                        }
-                        else
-                        {
-                            (Selected.GetComponent(typeSelect) as Building).changed = true;
-                            (Selected.GetComponent(typeSelect) as Building).selected = false;
-                        }
-                    }
-                }
 
                 if(hit.collider.tag == "House" || hit.collider.tag == "Hospital" || hit.collider.tag == "Supermarket" || hit.collider.tag == "Remains")
                 {
                     string buildingType = hit.collider.tag;
                     (hit.transform.gameObject.GetComponent(buildingType) as Building).Details();
                     Selected = hit.transform.gameObject;
-                    firstSelect = true;
                     (Selected.GetComponent(buildingType) as Building).changed = true;
                     (Selected.GetComponent(buildingType) as Building).selected = true;
                     typeSelect = buildingType;
+                    (Selected.GetComponent(buildingType) as Building).DeselectAllOthers();
                 }
                 else if(hit.collider.tag == "Agent")
                 {
                     Selected = hit.transform.gameObject;
                     Selected.GetComponent<Statistics>().changed = true;
                     Selected.GetComponent<Statistics>().selected = true;
-
+                    Selected.GetComponent<Statistics>().DeselectAllOthers();
                 }
             }
         }

@@ -44,6 +44,8 @@ public class AgentsSpawn : MonoBehaviour {
                 Rigidbody rb = g.AddComponent<Rigidbody>();
                 g.tag = "Agent";
 
+                g.GetComponent<SurvivorBasicState>().setID(remainingSurvivors);
+
                 g.transform.SetParent(gameObject.transform);
                 remainingSurvivors--;
                 spawningSurvivors();

@@ -29,7 +29,7 @@ public class SleepState : ISurvivor
         {
             if (survivor.getSurvivorTiredness() < 90)
             {
-                if(Time.fixedTime - currentTime >= 1.0f)
+                if(Time.fixedTime - currentTime >= 0.5f)
                 {
                     survivor.setSurvivorTiredness(survivor.getSurvivorTiredness() + 10);
                     currentTime = Time.fixedTime;
@@ -38,6 +38,7 @@ public class SleepState : ISurvivor
             else
             {
                 isSleeping = false;
+                survivor.home.GetComponent<House>().setSign(0);
                 ToHomeState();
             }
         }

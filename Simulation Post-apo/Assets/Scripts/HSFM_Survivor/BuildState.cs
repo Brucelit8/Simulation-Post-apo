@@ -44,6 +44,7 @@ public class BuildState : ISurvivor
                     survivor.home.GetComponent<House>().build(1);
                     isBuilding = false;
                     buildingTime = Time.fixedTime;
+                    survivor.home.GetComponent<House>().setSign(0);
                     ToHomeState();
                 }
             }
