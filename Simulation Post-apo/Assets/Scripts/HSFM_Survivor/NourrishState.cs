@@ -52,8 +52,8 @@ public class NourrishState : ISurvivor
         if (!roadHomeSet)
         {
             survivor.getWayPointsList().Clear();
-            survivor.checkBuildingHit(survivor.home.transform.position, true);
-            survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
+            survivor.checkBuildingHit(survivor.home.transform.position, survivor.home, true, true);
+            //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
             roadHomeSet = true;
         }
 

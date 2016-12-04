@@ -99,15 +99,24 @@ public class SurvivorBasicState : MonoBehaviour
         homeSet = true;
     }
 
-    public void checkBuildingHit(Vector3 destination, bool moving)
+    public void checkBuildingHit(Vector3 destination, GameObject destBuilding, bool moving, bool ignoringDestination)
     {
         LayerMask layerM = 1 << 8;
         layerM = ~layerM;
         RaycastHit hit;
 
-        if (Physics.Linecast(this.transform.position, destination, out hit))
+        if (Physics.Linecast(this.transform.position, destination, out hit, layerM))
         {
-            if (hit.collider.gameObject.tag == "House" || hit.collider.gameObject.tag == "Supermarket" || hit.collider.gameObject.tag == "Hospital")
+            if (ignoringDestination)
+            {
+                if (destBuilding != null && hit.collider.gameObject != destBuilding)
+                {
+                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
+                }
+
+                wayPointsList.Insert(wayPointsList.Count, destination);
+            }
+            else
             {
                 int indiceX;
                 int indiceZ;
@@ -126,16 +135,20 @@ public class SurvivorBasicState : MonoBehaviour
                     && currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 4
                     && currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] != 5)
                 {
-           //         Debug.Log(destination);
-           //         Debug.Log(indiceX + " " + indiceZ);
-           //         Debug.Log(currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ]);
-                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination);
+                    /*Debug.Log(destination);
+                    Debug.Log(indiceX + " " + indiceZ);
+                    Debug.Log(currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ]);*/
+                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
+                    wayPointsList.Insert(wayPointsList.Count, destination);
                 }
             }
         }
+
+        else
+            wayPointsList.Insert(wayPointsList.Count, destination);
     }
 
-    void getAroundBuilding(Vector3 actualPosition, GameObject building, Vector3 destination)
+    void getAroundBuilding(Vector3 actualPosition, GameObject building, Vector3 destination, GameObject destBuilding)
     {
         List<Vector3> buildingNodeList = new List<Vector3>();
 
@@ -151,7 +164,7 @@ public class SurvivorBasicState : MonoBehaviour
         {
             Vector3 survivorPos = new Vector3(actualPosition.x, actualPosition.y + 0.1f, actualPosition.z);
             Vector3 destPos = new Vector3(destination.x, destination.y + 0.1f, destination.z);
-            determinePath(buildingNodeList, destPos, survivorPos, false);
+            determinePath(buildingNodeList, destPos, survivorPos, false, destBuilding);
         }
 
         /*Debug.Log("#### LIST ###");
@@ -159,7 +172,7 @@ public class SurvivorBasicState : MonoBehaviour
             Debug.Log(v);*/
     }
 
-    void determinePath(List<Vector3> nodeList, Vector3 destination, Vector3 survivorPos, bool exitReached)
+    void determinePath(List<Vector3> nodeList, Vector3 destination, Vector3 survivorPos, bool exitReached, GameObject destBuilding)
     {
         if (!exitReached)
         {
@@ -212,13 +225,17 @@ public class SurvivorBasicState : MonoBehaviour
                     {
                         if (h.collider.gameObject.tag != "Node")
                         {
-                            getAroundBuilding(new Vector3(bestOption.x, transform.position.y, bestOption.z), h.collider.gameObject, destination);
+                            if (destBuilding != null)
+                                checkBuildingHit(destination, destBuilding, true, false);
+                            else
+                                checkBuildingHit(destination, destBuilding, true, true);
+                            //getAroundBuilding(new Vector3(bestOption.x, transform.position.y, bestOption.z), h.collider.gameObject, destination);
                             exitReached = true;
                         }
                     }
                 }
 
-                determinePath(nodeList, destination, new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), exitReached);
+                determinePath(nodeList, destination, new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), exitReached, destBuilding);
             }
             // else
             //   moving = false;

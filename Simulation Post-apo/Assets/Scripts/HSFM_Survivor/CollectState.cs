@@ -70,24 +70,50 @@ public class CollectState : ISurvivor
             {
                 if (hit.collider.gameObject.tag == "Wall")
                 {
-                    Vector3 destRange = new Vector3(point.x - survivor.transform.position.x, point.y - survivor.transform.position.y, point.z - survivor.transform.position.z);
+                    /*Vector3 destRange = new Vector3(point.x - survivor.transform.position.x, point.y - survivor.transform.position.y, point.z - survivor.transform.position.z);
                     destRange = Quaternion.Euler(0, 180, 0) * destRange;
                     Debug.DrawLine(survivor.transform.position, destRange, Color.red);
                     point.x = survivor.transform.position.x + destRange.x;
                     point.y = survivor.transform.position.y + destRange.y;
-                    point.z = survivor.transform.position.z + destRange.z;
+                    point.z = survivor.transform.position.z + destRange.z;*/
+
+                    int indiceX;
+                    int indiceZ;
+
+                    if (point.x - (int)point.x <= 0.5f)
+                        indiceX = (int)point.x;
+                    else
+                        indiceX = (int)point.x + 1;
+
+                    if (point.z - (int)point.z <= 0.5f)
+                        indiceZ = (int)point.z;
+                    else
+                        indiceZ = (int)point.z + 1;
+
+                    if (survivor.currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] == 1)
+                    {
+                        moving = false;
+                        /*Debug.Log(destination);
+                        Debug.Log(indiceX + " " + indiceZ);
+                        Debug.Log(currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ]);*/
+                        //getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
+                        //wayPointsList.Insert(wayPointsList.Count, destination);
+                    }
                 }
             }
 
             //CHECK WALL 2
-            if (point.x <= 0 || point.x >= survivor.currentMap.GetComponent<Map>().size - 1 || point.z <= 0 || point.z >= survivor.currentMap.GetComponent<Map>().size - 1)
+            if (point.x <= 0.7f || point.x >= survivor.currentMap.GetComponent<Map>().size - 2 || point.z <= 0.7f || point.z >= survivor.currentMap.GetComponent<Map>().size - 2)
                 moving = false;
             else
             {
                 moving = true;
                 lastPointReached = false;
-                survivor.checkBuildingHit(point, moving);
-                survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, point);
+                survivor.checkBuildingHit(point, null, moving, false);
+                // survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, point);
+
+                if (survivor.getWayPointsList().Count == 0)
+                    moving = false;
             }
         }
         else
@@ -179,17 +205,24 @@ public class CollectState : ISurvivor
                             }
                         }
                     }
+
                     else
                     {
                         collectingRessources = false;
                         moving = false;
                     }
+
                     if (survivor.survivorFood == 3 || survivor.survivorWater == 3 || survivor.survivorBandage == 3 || survivor.survivorScrap == 3)
                     {
                         if (survivor.homeSet)
                         {
                             collectingRessources = false;
                             goingHome = true;
+                        }
+                        else
+                        {
+                            collectingRessources = false;
+                            moving = false;
                         }
                     }
 
@@ -210,8 +243,8 @@ public class CollectState : ISurvivor
                 if (!roadHomeSet)
                 {
                     survivor.getWayPointsList().Clear();
-                    survivor.checkBuildingHit(survivor.home.transform.position, moving);
-                    survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
+                    survivor.checkBuildingHit(survivor.home.transform.position, survivor.home, moving, true);
+                    //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
                     roadHomeSet = true;
                 }
 
@@ -247,6 +280,7 @@ public class CollectState : ISurvivor
                         moving = false;
 
                         ToHomeState();
+                        stateChanged = true;
 
                     }
                     else
@@ -340,9 +374,9 @@ public class CollectState : ISurvivor
                 {
                     buildingCollected = other.gameObject;
                     survivor.getWayPointsList().Clear();
-                    survivor.checkBuildingHit(buildingCollected.transform.position, moving);
-                    survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
-                            other.gameObject.transform.position.z));
+                    survivor.checkBuildingHit(buildingCollected.transform.position, buildingCollected, true, true);
+                    //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
+                    //    other.gameObject.transform.position.z));
                     collectingRessources = true;
                 }
             }
@@ -351,11 +385,11 @@ public class CollectState : ISurvivor
             else if (other.gameObject.tag == "Supermarket" || other.gameObject.tag == "Hospital" || other.gameObject.tag == "Remains")
             {
                 buildingCollected = other.gameObject;
-                collectingRessources = true;
                 survivor.getWayPointsList().Clear();
-                survivor.checkBuildingHit(buildingCollected.transform.position, moving);
-                survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count,new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
-                        other.gameObject.transform.position.z));
+                survivor.checkBuildingHit(buildingCollected.transform.position, buildingCollected, true, true);
+                //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
+                //    other.gameObject.transform.position.z));
+                collectingRessources = true;
             }
         }
     }
