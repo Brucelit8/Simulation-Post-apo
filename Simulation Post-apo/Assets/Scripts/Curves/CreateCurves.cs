@@ -4,14 +4,18 @@ using System.Collections;
 
 public class CreateCurves : MonoBehaviour {
 
+    public Transform T1, T2;
+
     public LineRenderer LR1, LR2, LR3;
     float timeCurrent;
     public float timeLimit = 0.2f;
     public Transform origin;
+    private float lastYA, lastYW, lastYF;
     public float xScaleA, yScaleA, xScaleF, yScaleF, xScaleW, yScaleW;
-    int nbAgents;
-    int nbFood;
-    int nbWater;
+    private float yUp, yDown;
+    int nbAgents=0;
+    int nbFood=0;
+    int nbWater=0;
     bool fullA = false, fullF = false, fullW = false;
     int[] valuesA, valuesF, valuesW;
     int v_size;
@@ -44,11 +48,19 @@ public class CreateCurves : MonoBehaviour {
             valuesF[i] = -1;
             valuesW[i] = -1;
         }
+
+        nbAgents = countAgents();
+        nbWater = countWater();
+        nbFood = countFood();
+
+        yUp = T1.position.y;
+        yDown = T2.position.y;
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
+
         if(Time.fixedTime - timeCurrent >= timeLimit)
         {
             switch (current)
@@ -56,13 +68,42 @@ public class CreateCurves : MonoBehaviour {
                 case state.Agents:
                 {
                         nbAgents = countAgents();
+
+                        if(fullA)
+                        {
+                            if(lastYA > yUp)
+                            {
+                                yScaleA -= 0.1f;
+                            }
+
+                            if (lastYA < yDown)
+                            {
+                                yScaleA += 0.1f;
+                            }
+                        }
+
                         draw(false);
                         updateText();
+
                         break;
                 }
                 case state.Food:
                 {
                         nbFood = countFood();
+
+                        if (fullF)
+                        {
+                            if (lastYF > yUp)
+                            {
+                                yScaleF -= 0.01f;
+                            }
+
+                            if (lastYF < yDown)
+                            {
+                                yScaleF += 0.01f;
+                            }
+                        }
+
                         draw(false);
                         updateText();
                         break;
@@ -70,13 +111,69 @@ public class CreateCurves : MonoBehaviour {
                 case state.Water:
                 {
                         nbWater = countWater();
+
+                        if (fullW)
+                        {
+                            if (lastYW > yUp)
+                            {
+                                yScaleW -= 0.01f;
+                            }
+
+                            if (lastYW < yDown)
+                            {
+                                yScaleW += 0.01f;
+                            }
+                        }
+
                         draw(false);
                         updateText();
                         break;
                 }
                 case state.All:
                 {
+                        if (fullA)
+                        {
+                            if (lastYA > yUp)
+                            {
+                                yScaleA -= 0.1f;
+                            }
+
+                            if (lastYA < yDown)
+                            {
+                                yScaleA += 0.1f;
+                            }
+                        }
+
+                        if (fullF)
+                        {
+                            if (lastYF > yUp)
+                            {
+                                yScaleF -= 0.01f;
+                            }
+
+                            if (lastYF < yDown)
+                            {
+                                yScaleF += 0.01f;
+                            }
+                        }
+
+                        if (fullW)
+                        {
+                            if (lastYW > yUp)
+                            {
+                                yScaleW -= 0.01f;
+                            }
+
+                            if (lastYW < yDown)
+                            {
+                                yScaleW += 0.01f;
+                            }
+                        }
+
                         nbWater = countWater();
+                        nbFood = countFood();
+                        nbAgents = countAgents();
+
                         draw(true);
                         updateText();
                         break;
@@ -186,6 +283,10 @@ public class CreateCurves : MonoBehaviour {
                 {
                     for (int j = 0; j < v_size; j++)
                     {
+                        lastYA = origin.position.y + yScaleA * valuesA[j];
+                        lastYF = origin.position.y + yScaleF * valuesF[j];
+                        lastYW = origin.position.y + yScaleW * valuesW[j];
+
                         LR1.SetPosition(j, new Vector3(origin.position.x + j * xScaleA, origin.position.y + yScaleA * valuesA[j], origin.position.z));
                         LR2.SetPosition(j, new Vector3(origin.position.x + j * xScaleF, origin.position.y + yScaleF * valuesF[j], origin.position.z));
                         LR3.SetPosition(j, new Vector3(origin.position.x + j * xScaleW, origin.position.y + yScaleW * valuesW[j], origin.position.z));
@@ -197,6 +298,7 @@ public class CreateCurves : MonoBehaviour {
                 {
                     for (int j = 0; j < v_size; j++)
                     {
+                        lastYA = origin.position.y + yScaleA * valuesA[j];
                         LR1.SetPosition(j, new Vector3(origin.position.x + j * xScaleA, origin.position.y + yScaleA * valuesA[j], origin.position.z));
                     }
                     break;
@@ -206,6 +308,7 @@ public class CreateCurves : MonoBehaviour {
                 {
                     for (int j = 0; j < v_size; j++)
                     {
+                        lastYF = origin.position.y + yScaleF * valuesF[j];
                         LR2.SetPosition(j, new Vector3(origin.position.x + j * xScaleF, origin.position.y + yScaleF * valuesF[j], origin.position.z));
                     }
                     break;
@@ -215,6 +318,7 @@ public class CreateCurves : MonoBehaviour {
                 {
                     for (int j = 0; j < v_size; j++)
                     {
+                        lastYW = origin.position.y + yScaleW * valuesW[j];
                         LR3.SetPosition(j, new Vector3(origin.position.x + j * xScaleW, origin.position.y + yScaleW * valuesW[j], origin.position.z));
                     }
                     break;
