@@ -121,7 +121,7 @@ public class House : Building {
             {
                 if(i> 0 && i < size - 1 && j > 0 && j < size - 1)
                 {
-                    if (i != this.getX() && j != this.getY() && M[i, j] == 0)
+                    if ((i != this.getX() || j != this.getY()) && M[i, j] == 0)
                     {
                         ind1 = i;
                         ind2 = j;
@@ -132,7 +132,6 @@ public class House : Building {
             }
         }
 
-        Debug.Log("ATTENTION VOICI LES INDICES : i " + ind1 + " - j " + ind2);
         Component[] Grounds = GameObject.Find("MapManager").GetComponentsInChildren<Component>();
         foreach (Component G in Grounds)
         {

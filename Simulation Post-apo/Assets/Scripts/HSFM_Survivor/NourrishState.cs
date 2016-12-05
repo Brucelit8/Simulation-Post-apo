@@ -104,6 +104,7 @@ public class NourrishState : ISurvivor
     public void ToCollectState()
     {
         survivor.currentState = survivor.collectState;
+        roadHomeSet = false;
     }
 
     public void ToFightState()
