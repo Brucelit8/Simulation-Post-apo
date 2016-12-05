@@ -8,12 +8,22 @@ public class Remains : Building
     // Use this for initialization
     void Start()
     {
+        if (GameObject.Find("UserValues"))
+        {
+            coefR = (float)UserValues.nbR / 500.0f;
+        }
+        else
+        {
+            coefR = 1.0f;
+        }
+
+
         safety = 0;
         bed = 0;
-        water = (int)Random.Range(0f, 3f);
-        food = (int)Random.Range(0f, 3f);
-        bandage = (int)Random.Range(0f, 1.5f);
-        scrap = (int)Random.Range(0f, 5f);
+        water = (int)(Random.Range(0f, 3f) * coefR);
+        food = (int)(Random.Range(0f, 3f) * coefR);
+        bandage = (int)(Random.Range(0f, 1.5f) * coefR);
+        scrap = (int)(Random.Range(0f, 5f) * coefR);
     }
 
     // Update is called once per frame

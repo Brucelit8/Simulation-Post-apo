@@ -103,7 +103,7 @@ public class CollectState : ISurvivor
             }
 
             //CHECK WALL 2
-            if (point.x <= 0.7f || point.x >= survivor.currentMap.GetComponent<Map>().size - 2 || point.z <= 0.7f || point.z >= survivor.currentMap.GetComponent<Map>().size - 2)
+            if (point.x <= 0.7f || point.x >= survivor.currentMap.GetComponent<Map>().getSize() - 2 || point.z <= 0.7f || point.z >= survivor.currentMap.GetComponent<Map>().getSize() - 2)
                 moving = false;
             else
             {

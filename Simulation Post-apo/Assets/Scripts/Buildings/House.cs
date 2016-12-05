@@ -15,12 +15,21 @@ public class House : Building {
     // Use this for initialization
     void Start () {
 
+        if (GameObject.Find("UserValues"))
+        {
+            coefR = (float)UserValues.nbR / 500.0f;
+        }
+        else
+        {
+            coefR = 1.0f;
+        }
+
         safety = (int)Random.Range(0f, 5.0f);
         bed = (int)Random.Range(2f, 10f);
-        water = (int)Random.Range(5f, 12f);
-        food = (int)Random.Range(5f, 12f);
-        bandage = (int)Random.Range(1f, 3f);
-        scrap = (int)Random.Range(1f, 5f);
+        water = (int)(Random.Range(5f, 12f) * coefR);
+        food = (int)(Random.Range(5f, 12f) * coefR);
+        bandage = (int)(Random.Range(1f, 3f) * coefR);
+        scrap = (int)(Random.Range(1f, 5f) * coefR);
         spawnTime = Time.fixedTime;
         availableBeds = bed;
         maxBeds = availableBeds;
@@ -110,7 +119,7 @@ public class House : Building {
 
     public void build(int v)
     {
-        int size = GameObject.Find("Map").GetComponent<Map>().size;
+        int size = GameObject.Find("Map").GetComponent<Map>().getSize();
         int[,] M = GameObject.Find("Map").GetComponent<Map>().getMap();
 
         int ind1=0, ind2=0;

@@ -12,6 +12,7 @@ public class CreateCurves : MonoBehaviour {
     public Transform origin;
     private float lastYA, lastYW, lastYF;
     public float xScaleA, yScaleA, xScaleF, yScaleF, xScaleW, yScaleW;
+    public int nbEA, nbEF, nbEW;
     private float yUp, yDown;
     int nbAgents=0;
     int nbFood=0;
@@ -19,8 +20,8 @@ public class CreateCurves : MonoBehaviour {
     bool fullA = false, fullF = false, fullW = false;
     int[] valuesA, valuesF, valuesW;
     int v_size;
-    public enum state { Agents, Food, Water, All };
-    public state current;
+    public enum state { Agents, Food, Water, All, None};
+    protected state current ;
     public TextMesh a_text, f_text, w_text;
     // Use this for initialization
 
@@ -32,13 +33,17 @@ public class CreateCurves : MonoBehaviour {
         valuesF = new int[v_size];
         valuesW = new int[v_size];
 
-        LR1.SetVertexCount(v_size);
-        LR2.SetVertexCount(v_size);
-        LR3.SetVertexCount(v_size);
+        LR1.SetVertexCount(0);
+        LR2.SetVertexCount(0);
+        LR3.SetVertexCount(0);
 
         LR1.SetColors(Color.green, Color.green);
         LR2.SetColors(Color.red, Color.red);
         LR3.SetColors(Color.blue, Color.blue);
+
+        LR1.enabled = false;
+        LR2.enabled = false;
+        LR3.enabled = false;
 
         timeCurrent = Time.fixedTime;
 
@@ -55,18 +60,31 @@ public class CreateCurves : MonoBehaviour {
 
         yUp = T1.position.y;
         yDown = T2.position.y;
+
+        current = state.None;
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-
         if(Time.fixedTime - timeCurrent >= timeLimit)
         {
             switch (current)
             {
                 case state.Agents:
                 {
+                        if(!LR1.enabled)
+                        {
+                            LR1.enabled = true;
+                        }
+                        if (LR2.enabled)
+                        {
+                            LR2.enabled = false;
+                        }
+                        if (LR3.enabled)
+                        {
+                            LR3.enabled = false;
+                        }
                         nbAgents = countAgents();
 
                         if(fullA)
@@ -89,6 +107,19 @@ public class CreateCurves : MonoBehaviour {
                 }
                 case state.Food:
                 {
+                        if (LR1.enabled)
+                        {
+                            LR1.enabled = false;
+                        }
+                        if (!LR2.enabled)
+                        {
+                            LR2.enabled = true;
+                        }
+                        if (LR3.enabled)
+                        {
+                            LR3.enabled = false;
+                        }
+
                         nbFood = countFood();
 
                         if (fullF)
@@ -110,6 +141,19 @@ public class CreateCurves : MonoBehaviour {
                 }
                 case state.Water:
                 {
+                        if (LR1.enabled)
+                        {
+                            LR1.enabled = false;
+                        }
+                        if (LR2.enabled)
+                        {
+                            LR2.enabled = false;
+                        }
+                        if (!LR3.enabled)
+                        {
+                            LR3.enabled = true;
+                        }
+
                         nbWater = countWater();
 
                         if (fullW)
@@ -131,6 +175,19 @@ public class CreateCurves : MonoBehaviour {
                 }
                 case state.All:
                 {
+                        if (!LR1.enabled)
+                        {
+                            LR1.enabled = true;
+                        }
+                        if (!LR2.enabled)
+                        {
+                            LR2.enabled = true;
+                        }
+                        if (!LR3.enabled)
+                        {
+                            LR3.enabled = true;
+                        }
+
                         if (fullA)
                         {
                             if (lastYA > yUp)
@@ -178,7 +235,7 @@ public class CreateCurves : MonoBehaviour {
                         updateText();
                         break;
                 }
-                default:
+                case state.None:
                 {
                         break;
                 }
@@ -192,14 +249,12 @@ public class CreateCurves : MonoBehaviour {
         /////////////////////////////////////////////////////////1
         int i = 0;
 
-        int i1 = v_size-1, i2 = v_size - 1, i3 = v_size - 1;
-
         while(i<v_size && valuesA[i] != -1 && !fullA)
         {
             i++;
         }
 
-        if(i == v_size-1)
+        if(i == v_size)
         {
             fullA = true;
         }
@@ -212,12 +267,15 @@ public class CreateCurves : MonoBehaviour {
             }
 
             valuesA[v_size - 1] = nbAgents;
+            nbEA = v_size;
+            LR1.SetVertexCount(v_size);
 
         }
         else
         {
             valuesA[i] = nbAgents;
-            i1 = i;
+            LR1.SetVertexCount(i);
+            nbEA = i;
         }
         ////////////////////////////////////////////////////////2
         i = 0;
@@ -227,7 +285,7 @@ public class CreateCurves : MonoBehaviour {
             i++;
         }
 
-        if (i == v_size - 1)
+        if (i == v_size)
         {
             fullF = true;
         }
@@ -240,12 +298,16 @@ public class CreateCurves : MonoBehaviour {
             }
 
             valuesF[v_size - 1] = nbFood;
+            LR2.SetVertexCount(v_size);
+            nbEF = v_size;
 
         }
         else
         {
             valuesF[i] = nbFood;
-            i2 = i;
+            LR2.SetVertexCount(i);
+            nbEF = i;
+
         }
         /////////////////////////////////////////////////////////3
         i = 0;
@@ -255,7 +317,7 @@ public class CreateCurves : MonoBehaviour {
             i++;
         }
 
-        if (i == v_size - 1)
+        if (i == v_size)
         {
             fullW = true;
         }
@@ -268,12 +330,15 @@ public class CreateCurves : MonoBehaviour {
             }
 
             valuesW[v_size - 1] = nbWater;
+            LR3.SetVertexCount(v_size);
+            nbEW = v_size;
 
         }
         else
         {
             valuesW[i] = nbWater;
-            i3 = i;
+            LR3.SetVertexCount(i);
+            nbEW = i;
 
         }
 
@@ -281,14 +346,19 @@ public class CreateCurves : MonoBehaviour {
             {
                 case state.All:
                 {
-                    for (int j = 0; j < v_size; j++)
+                    for (int j = 0; j < nbEA; j++)
                     {
                         lastYA = origin.position.y + yScaleA * valuesA[j];
-                        lastYF = origin.position.y + yScaleF * valuesF[j];
-                        lastYW = origin.position.y + yScaleW * valuesW[j];
-
                         LR1.SetPosition(j, new Vector3(origin.position.x + j * xScaleA, origin.position.y + yScaleA * valuesA[j], origin.position.z));
+                    }
+                    for (int j = 0; j < nbEF; j++)
+                    {
+                        lastYF = origin.position.y + yScaleF * valuesF[j];
                         LR2.SetPosition(j, new Vector3(origin.position.x + j * xScaleF, origin.position.y + yScaleF * valuesF[j], origin.position.z));
+                    }
+                    for (int j = 0; j < nbEW; j++)
+                    {
+                        lastYW = origin.position.y + yScaleW * valuesW[j];
                         LR3.SetPosition(j, new Vector3(origin.position.x + j * xScaleW, origin.position.y + yScaleW * valuesW[j], origin.position.z));
                     }
                     break;
@@ -296,7 +366,7 @@ public class CreateCurves : MonoBehaviour {
 
                 case state.Agents:
                 {
-                    for (int j = 0; j < v_size; j++)
+                    for (int j = 0; j < nbEA; j++)
                     {
                         lastYA = origin.position.y + yScaleA * valuesA[j];
                         LR1.SetPosition(j, new Vector3(origin.position.x + j * xScaleA, origin.position.y + yScaleA * valuesA[j], origin.position.z));
@@ -306,7 +376,7 @@ public class CreateCurves : MonoBehaviour {
 
                 case state.Food:
                 {
-                    for (int j = 0; j < v_size; j++)
+                    for (int j = 0; j < nbEF; j++)
                     {
                         lastYF = origin.position.y + yScaleF * valuesF[j];
                         LR2.SetPosition(j, new Vector3(origin.position.x + j * xScaleF, origin.position.y + yScaleF * valuesF[j], origin.position.z));
@@ -316,7 +386,7 @@ public class CreateCurves : MonoBehaviour {
 
              case state.Water:
                 {
-                    for (int j = 0; j < v_size; j++)
+                    for (int j = 0; j < nbEW; j++)
                     {
                         lastYW = origin.position.y + yScaleW * valuesW[j];
                         LR3.SetPosition(j, new Vector3(origin.position.x + j * xScaleW, origin.position.y + yScaleW * valuesW[j], origin.position.z));

@@ -6,12 +6,22 @@ public class Supermarket : Building {
 
 	// Use this for initialization
 	void Start () {
+
+        if (GameObject.Find("UserValues"))
+        {
+            coefR = (float)UserValues.nbR / 500.0f;
+        }
+        else
+        {
+            coefR = 1.0f;
+        }
+
         safety = (int)Random.Range(0f, 10f);
         bed = 0;
-        water = (int)Random.Range(5f, 20f);
-        food = (int)Random.Range(5f, 20f);
-        bandage = (int)Random.Range(2f, 5f);
-        scrap = (int)Random.Range(1f, 5f);
+        water = (int)(Random.Range(5f, 20f) * coefR);
+        food = (int)(Random.Range(5f, 20f) * coefR);
+        bandage = (int)(Random.Range(2f, 5f) * coefR);
+        scrap = (int)(Random.Range(1f, 5f) * coefR);
     }
 
     // Update is called once per frame

@@ -7,12 +7,21 @@ public class Hospital : Building {
 	// Use this for initialization
 	void Start ()
     {
+        if (GameObject.Find("UserValues"))
+        {
+            coefR = (float)UserValues.nbR / 500.0f;
+        }
+        else
+        {
+            coefR = 1.0f;
+        }
+
         safety = (int)Random.Range(0f, 10f);
         bed = (int)Random.Range(10f, 100f);
-        water = (int)Random.Range(0f, 10f);
-        food = (int)Random.Range(0f, 10f);
-        bandage = (int)Random.Range(8f, 15f);
-        scrap = (int)Random.Range(1f, 5f);
+        water = (int)(Random.Range(0f, 10f) * coefR);
+        food = (int)(Random.Range(0f, 3f) * coefR);
+        bandage = (int)(Random.Range(8f, 15f) * coefR);
+        scrap = (int)(Random.Range(1f, 5f) * coefR);
     }
 
     // Update is called once per frame

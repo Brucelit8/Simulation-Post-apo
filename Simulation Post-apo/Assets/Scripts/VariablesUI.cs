@@ -8,26 +8,21 @@ public class VariablesUI : MonoBehaviour {
 
     public static float a_thirst, a_tiredness, a_hunger, a_health;
 
-    public static Text t_type, t_safety, t_bed, t_water, t_food, t_bandage, t_scrap;
+    public static Text a_id, t_type, t_safety, t_bed, t_water, t_food, t_bandage, t_scrap;
+
+    public static string name = "Agent :";
 
     static VariablesUI instance;
     // Use this for initialization
 
     void Awake()
     {
-        if(instance)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+
     }
 
     void Start ()
     {
+        a_id = GameObject.Find("Agent").GetComponent<Text>();
         t_type = GameObject.Find("Type").GetComponent<Text>();
         t_safety = GameObject.Find("Safety").GetComponent<Text>();
         t_bed = GameObject.Find("Bed").GetComponent<Text>();
@@ -45,6 +40,7 @@ public class VariablesUI : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        a_id.text = name;
         th_slider.value = a_thirst;
         he_slider.value = a_health;
         hu_slider.value = a_hunger;

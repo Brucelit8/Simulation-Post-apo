@@ -34,9 +34,9 @@ public class Statistics : MonoBehaviour
         {
             if (selected)
             {
-
+                VariablesUI.name = "Agent : " + GetComponent<SurvivorBasicState>().getID();
                 string s = "Materials/Cha_Knight-Face_s";
-
+                
                 Component[] R = GetComponentsInChildren(typeof(Renderer));
                 foreach (Renderer r in R)
                 {

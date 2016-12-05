@@ -3,7 +3,7 @@ using System.Collections;
 
 public class AgentsSpawn : MonoBehaviour {
 
-    public int remainingSurvivors = 10;
+    private int remainingSurvivors ;
     private int mapSize;
     private int[,] map;
     private float scaleChange = 0.7f;
@@ -14,7 +14,6 @@ public class AgentsSpawn : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-	  
 	}
 	
 	// Update is called once per frame
@@ -25,10 +24,10 @@ public class AgentsSpawn : MonoBehaviour {
 
     public void spawningSurvivors()
     {
-        if(remainingSurvivors != 0)
+        if (remainingSurvivors != 0)
         {
-            int x = Random.Range(0, MapGameObject.GetComponent<Map>().size);
-            int y = Random.Range(0, MapGameObject.GetComponent<Map>().size);
+            int x = Random.Range(0, MapGameObject.GetComponent<Map>().getSize());
+            int y = Random.Range(0, MapGameObject.GetComponent<Map>().getSize());
             int[,] map = MapGameObject.GetComponent<Map>().getMap();
 
             if (map[x,y] == 0)
@@ -57,5 +56,10 @@ public class AgentsSpawn : MonoBehaviour {
             }
         }
 
+    }
+
+    public void setNumberAgents(int i)
+    {
+        remainingSurvivors = i;
     }
 }

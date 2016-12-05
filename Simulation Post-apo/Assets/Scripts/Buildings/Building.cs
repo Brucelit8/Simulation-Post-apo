@@ -14,6 +14,8 @@ public class Building : MonoBehaviour{
     protected int bandage;
     protected int scrap;
 
+    protected float coefR = 1.0f;
+
     protected int X, Y;
 
     // Use this for initialization
@@ -26,7 +28,9 @@ public class Building : MonoBehaviour{
 
 	}
 
-    public Building() {
+    public Building()
+    {
+
     }
 
     public virtual void Details() { }

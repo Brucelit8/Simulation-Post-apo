@@ -3,14 +3,14 @@ using System.Collections;
 
 public class Map : MonoBehaviour {
 
-    public int size = 10;   //Length of the square edge of the map
+    private int size = 30;   //Length of the square edge of the map
     public float ratio = 1f;    //Modify the distance between prefabs
 
-    public int nbHospitals = 1;
-    public int nbSupermarkets = 2;
-    public int nbHouses = 10;
-    public int nbRemains = 50;
-    public int nbSurvivors = 20;
+    private int nbHospitals = 1;
+    private int nbSupermarkets = 2;
+    private int nbHouses = 10;
+    private int nbRemains = 70;
+    private int nbSurvivors = 20;
 
     private int[,] map;     //Double Array of int to represent the map as a matrix
     /* 
@@ -35,10 +35,38 @@ public class Map : MonoBehaviour {
     public GameObject supermarket;
     public GameObject AgentManager;
 
+    public int getSize()
+    {
+        return size;
+    }
+
+    public int getNbSurvivors()
+    {
+        return nbSurvivors;
+    }
+
     void Start()
     {
+        if(GameObject.Find("UserValues"))
+        {
+            size = UserValues.sizeM;
+            nbSurvivors = UserValues.nbA;
+            float d = (float)(size) / 30.0f;
+            nbHospitals = (int)((float)nbHospitals *d);
+            nbSupermarkets = (int)((float)nbSupermarkets * d);
+            nbHouses = (int)((float)nbHouses * d);
+            nbRemains = (int)((float)nbRemains * d);
+
+        }
+        else
+        {
+            size = 30;
+            nbSurvivors = 20;
+        }
+
         GenerateMap();
         Load();
+        AgentManager.GetComponent<AgentsSpawn>().setNumberAgents(nbSurvivors);
         AgentManager.GetComponent<AgentsSpawn>().spawningSurvivors();
     }
 
