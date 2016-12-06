@@ -39,7 +39,7 @@ public class House : Building {
     void Update()
     {
 
-        if(Time.fixedTime - spawnTime > 4.0f)
+        if(Time.fixedTime - spawnTime > 8.0f)
         {
             if(haveWell)
             {
@@ -194,4 +194,14 @@ public class House : Building {
             }
         }
     }
+
+    public bool LowResources()
+    {
+        if((float)food / (float)(maxBeds - availableBeds) <= 4.0f || (float)water / (float)(maxBeds - availableBeds) <= 5.0f)
+        {
+            return true;
+        }
+        return false;
+    }
+
 }

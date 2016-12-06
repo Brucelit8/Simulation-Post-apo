@@ -113,10 +113,13 @@ public class Statistics : MonoBehaviour
             this.GetComponent<SurvivorBasicState>().setSurvivorTiredness(this.GetComponent<SurvivorBasicState>().getSurvivorTiredness() - 0.01f * Time.timeScale);
         else
             this.GetComponent<SurvivorBasicState>().setSurvivorTiredness(0);
-
+        if(this.GetComponent<SurvivorBasicState>().getSurvivorTiredness() == 0.0f)
+        {
+            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.05f * Time.timeScale);
+        }
         if (this.GetComponent<SurvivorBasicState>().getSurvivorHunger() == 0.0f)
         {
-            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.2f * Time.timeScale);
+            this.GetComponent<SurvivorBasicState>().setSurvivorHealth(this.GetComponent<SurvivorBasicState>().getSurvivorHealth() - 0.3f * Time.timeScale);
         }
 
         if (this.GetComponent<SurvivorBasicState>().getSurvivorThirst() == 0.0f)

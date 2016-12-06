@@ -23,7 +23,7 @@ public class Remains : Building
         water = (int)(Random.Range(0f, 3f) * coefR);
         food = (int)(Random.Range(0f, 3f) * coefR);
         bandage = (int)(Random.Range(0f, 1.5f) * coefR);
-        scrap = (int)(Random.Range(0f, 5f) * coefR);
+        scrap = (int)(Random.Range(2f, 8f) * coefR);
     }
 
     // Update is called once per frame

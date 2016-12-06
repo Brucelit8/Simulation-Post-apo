@@ -34,12 +34,9 @@ public class AgentsSpawn : MonoBehaviour {
             {
                 GameObject g = (GameObject)Instantiate(survivor, new Vector3(x, 0.1f, y), Quaternion.identity);
                 g.transform.localScale -= new Vector3(scaleChange, scaleChange, scaleChange);
-
-                // Player layer
+                g.GetComponent<SurvivorBasicState>().startingPosition = new Vector3(x, 0.1f, y);
                 g.layer = 8;
 
-                SurvivorBasicState sb = g.AddComponent(typeof(SurvivorBasicState)) as SurvivorBasicState;
-                //BoxCollider bc = g.AddComponent<BoxCollider>();
                 Rigidbody rb = g.AddComponent<Rigidbody>();
                 g.tag = "Agent";
 

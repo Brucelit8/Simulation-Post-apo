@@ -4,9 +4,12 @@ using System.Collections.Generic;
 
 public class SurvivorBasicState : MonoBehaviour
 {
+    public SpriteRenderer sword;
+    public LayerMask layerM;
+    public LayerMask layerMBuilding;
     private int ID;
     public float speed = 2.3f;
-    public Vector3 direction;
+    public Vector3 startingPosition;
     List<Vector3> wayPointsList;
 
     public ISurvivor currentState;
@@ -15,9 +18,12 @@ public class SurvivorBasicState : MonoBehaviour
     public NourrishState nourrishState;
     public FightState fightState;
     public RepairState repairState;
-    public HomeState homeState;
+    public HomeState homeState; 
     public SleepState sleepState;
+    public HealState healState;
 
+
+    public int loopCounter = 0;
     public int survivorFood;
     public int survivorWater;
     public int survivorBandage;
@@ -25,6 +31,7 @@ public class SurvivorBasicState : MonoBehaviour
 
     public GameObject home;
     public bool homeSet;
+    public bool destInBuilding = false;
 
     float survivorHunger;
     float survivorThirst;
@@ -51,11 +58,11 @@ public class SurvivorBasicState : MonoBehaviour
         collectState = new CollectState(this);
         buildState = new BuildState(this);
         nourrishState = new NourrishState(this);
-        //fightState = new FightState();
+        fightState = new FightState(this);
         repairState = new RepairState(this);
         sleepState = new SleepState(this);
         homeState = new HomeState(this);
-
+        healState = new HealState(this);
         currentMap = GameObject.Find("Map");
     }
 
@@ -68,6 +75,15 @@ public class SurvivorBasicState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.y < -15)
+        {
+            //Debug.Log("test y" + " " + transform.position.y);
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            currentState = collectState;
+            collectState.Initialize();
+            transform.position = new Vector3(startingPosition.x, startingPosition.y + 0.2f, startingPosition.z);
+        }
+
         currentState.UpdateState();
     }
 
@@ -96,135 +112,152 @@ public class SurvivorBasicState : MonoBehaviour
         homeSet = true;
     }
 
+    public GameObject getMap() { return currentMap; }
+
     public void checkBuildingHit(Vector3 destination, GameObject destBuilding, bool moving, bool ignoringDestination)
     {
-        LayerMask layerM = 1 << 8;
-        layerM = ~layerM;
         RaycastHit hit;
-
-        if (Physics.Linecast(new Vector3(this.transform.position.x, this.transform.position.y + 0.15f, this.transform.position.z),
-                    new Vector3(destination.x, destination.y + 0.15f, destination.z), out hit, layerM))
+        loopCounter = 0;
+        if (Physics.Linecast(this.GetComponent<Collider>().bounds.center, destination, out hit, layerMBuilding))
         {
             if (ignoringDestination)
             {
-                if (destBuilding != null && hit.collider.gameObject != destBuilding)
+                if (destBuilding != null && hit.collider.gameObject.transform.position != destBuilding.transform.position)
                 {
-                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
+                    getAroundBuilding(hit.collider.gameObject, destination, destBuilding, transform.gameObject);
                 }
-
-                wayPointsList.Insert(wayPointsList.Count, destination);
+                //wayPointsList.Insert(wayPointsList.Count, destination);
             }
             else
             {
-                float indiceMaxX = hit.collider.bounds.max.x + 0.05f;
-                float indiceMinX = hit.collider.bounds.min.x - 0.05f;
-                float indiceMaxZ = hit.collider.bounds.max.z + 0.05f;
-                float indiceMinZ = hit.collider.bounds.min.z - 0.05f;
-
+                float indiceMaxX = hit.collider.gameObject.GetComponent<Collider>().bounds.max.x + 0.05f;
+                float indiceMinX = hit.collider.gameObject.GetComponent<Collider>().bounds.min.x - 0.05f;
+                float indiceMaxZ = hit.collider.gameObject.GetComponent<Collider>().bounds.max.z + 0.05f;
+                float indiceMinZ = hit.collider.gameObject.GetComponent<Collider>().bounds.min.z - 0.05f;
                 if ((destination.x > indiceMaxX || destination.x < indiceMinX) || (destination.z > indiceMaxZ || destination.z < indiceMinZ))
                 {
-                    getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
-                    wayPointsList.Insert(wayPointsList.Count, destination);
+                    getAroundBuilding(hit.collider.gameObject, destination, destBuilding, transform.gameObject);
+                    //wayPointsList.Insert(wayPointsList.Count, destination);
+                }
+                else
+                {
+                    destInBuilding = true;
                 }
             }
         }
-
-        else
-            wayPointsList.Insert(wayPointsList.Count, destination);
+        //else
+            //wayPointsList.Insert(wayPointsList.Count, destination);
     }
-
-    void getAroundBuilding(Vector3 actualPosition, GameObject building, Vector3 destination, GameObject destBuilding)
+    void getAroundBuilding(GameObject building, Vector3 destination, GameObject destBuilding, GameObject source)
     {
-        List<Vector3> buildingNodeList = new List<Vector3>();
-
+        List<GameObject> buildingNodeList = new List<GameObject>();
         foreach (Transform child in building.transform)
         {
             if (child.tag == "Node")
             {
-                buildingNodeList.Add(child.transform.position);
+                buildingNodeList.Add(child.gameObject);
             }
         }
-
         if (buildingNodeList.Count > 0)
         {
-            Vector3 survivorPos = new Vector3(actualPosition.x, actualPosition.y + 0.1f, actualPosition.z);
-            Vector3 destPos = new Vector3(destination.x, destination.y + 0.1f, destination.z);
-            determinePath(buildingNodeList, destPos, survivorPos, false, destBuilding);
+            determinePath(buildingNodeList, destination, source, destBuilding, building);
         }
-
-        /*Debug.Log("#### LIST ###");
-        foreach (Vector3 v in wayPointsList)
-            Debug.Log(v);*/
     }
-
-    void determinePath(List<Vector3> nodeList, Vector3 destination, Vector3 survivorPos, bool exitReached, GameObject destBuilding)
+    void determinePath(List<GameObject> nodeList, Vector3 destination, GameObject source, GameObject destBuilding, GameObject originalHitBuilding)
     {
-        if (!exitReached)
+        List<GameObject> reachableNodes = new List<GameObject>();
+        RaycastHit h;
+        if (source.tag == "Node")
+            source.GetComponent<Collider>().enabled = false;
+        else if (source.tag == "Agent")
         {
-            List<Vector3> reachableNodes = new List<Vector3>();
-            LayerMask layerM = 1 << 8;
-            layerM = ~layerM;
-            RaycastHit h;
-
-
-            foreach (Vector3 n in nodeList)
+            foreach (GameObject n in nodeList)
             {
-                Vector3 nPos = new Vector3(n.x, n.y + 0.05f, n.z);
-
-                if (Physics.Linecast(survivorPos, nPos, out h, layerM))
+                if (source.GetComponent<Collider>().bounds.Intersects(n.GetComponent<Collider>().bounds))
                 {
-                    if (h.collider.gameObject.tag == "Node")
-                        reachableNodes.Add(n);
+                    n.GetComponent<Collider>().enabled = false;
                 }
             }
-            /*
-            Debug.Log("### NODES REACHABLES ###");
-            Debug.Log(reachableNodes.Count);
-            */
-            if (reachableNodes.Count > 0)
-            {
-                Vector3 bestOption = reachableNodes[0];
-
-                if (reachableNodes.Count > 1)
-                {
-                    foreach (Vector3 v in reachableNodes)
-                    {
-                        if (Vector3.Distance(bestOption, destination) > Vector3.Distance(v, destination))
-                            bestOption = v;
-                    }
-                }
-
-                wayPointsList.Insert(wayPointsList.Count, new Vector3(bestOption.x, this.transform.position.y, bestOption.z));
-
-                foreach (Vector3 n in reachableNodes)
-                    nodeList.Remove(n);
-
-                if (Physics.Linecast(new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), destination, out h, layerM))
-                {
-                    if (destBuilding != null && h.collider.gameObject == destBuilding)
-                        exitReached = true;
-                    else
-                    {
-                        if (nodeList.Count <= 1)
-                        {
-                            if (h.collider.gameObject.tag != "Node")
-                            {
-                                getAroundBuilding(new Vector3(bestOption.x, transform.position.y, bestOption.z), h.collider.gameObject, destination, destBuilding);
-                            }
-                        }
-                    }
-                }
-
-                else
-                {
-                    exitReached = true;
-                }
-
-                determinePath(nodeList, destination, new Vector3(bestOption.x, bestOption.y + 0.1f, bestOption.z), exitReached, destBuilding);
-            }
-            // else
-            //   moving = false;
         }
+        foreach (GameObject n in nodeList)
+        {
+            if (Physics.Linecast(source.transform.position, n.transform.position, out h, layerM))
+            {
+                if (h.collider.gameObject.tag == "Node" && h.collider.gameObject == n)
+                    reachableNodes.Add(n);
+            }
+        }
+        GameObject bestOption = null;
+        if (reachableNodes.Count == 3)
+        {
+            bestOption = reachableNodes[0];
+            foreach (GameObject v in reachableNodes)
+            {
+                if (Vector3.Distance(bestOption.transform.position, destination) > Vector3.Distance(v.transform.position, destination))
+                    bestOption = v;
+            }
+            wayPointsList.Insert(wayPointsList.Count, bestOption.transform.position);
+            //bestOption.GetComponent<Collider>().enabled = false;
+        }
+        else if (reachableNodes.Count == 2)
+        {
+            bestOption = reachableNodes[0];
+            if (Vector3.Distance(bestOption.transform.position, destination) > Vector3.Distance(reachableNodes[1].transform.position, destination))
+                bestOption = reachableNodes[1];
+            foreach (GameObject v in reachableNodes)
+            {
+                nodeList.Remove(v);
+            }
+            wayPointsList.Insert(wayPointsList.Count, bestOption.transform.position);
+            bestOption.GetComponent<Collider>().enabled = false;
+            reachableNodes.Clear();
+
+            foreach (GameObject v in nodeList)
+            {
+                if (Physics.Linecast(bestOption.transform.position, v.transform.position, out h, layerM))
+                {
+                    if (h.collider.gameObject.tag == "Node" && h.collider.gameObject == v)
+                        reachableNodes.Add(v);
+                }
+                if (reachableNodes.Count > 0)
+                {
+                    wayPointsList.Insert(wayPointsList.Count, reachableNodes[0].transform.position);
+                    bestOption = reachableNodes[0];
+                    //reachableNodes[0].GetComponent<Collider>().enabled = false;
+                }
+            }
+        }
+        else if (reachableNodes.Count == 1)
+        {
+            wayPointsList.Insert(wayPointsList.Count, reachableNodes[0].transform.position);
+            bestOption = reachableNodes[0];
+            //reachableNodes[0].GetComponent<Collider>().enabled = false;
+        }
+        foreach (Transform child in originalHitBuilding.transform)
+        {
+            if (child.tag == "Node")
+            {
+                child.gameObject.GetComponent<Collider>().enabled = true;
+            }
+        }
+        if (Physics.Linecast(bestOption.transform.position, destination, out h, layerMBuilding))
+        {
+            if (loopCounter > 3)
+            {
+                if (destBuilding != null && h.collider.gameObject != destBuilding)
+                {
+                    loopCounter++;
+                //    Debug.Log(h.collider.gameObject + " " + h.collider.gameObject.transform.position + " " + destBuilding + " " + destBuilding.transform.position);
+                    getAroundBuilding(h.collider.gameObject, destination, destBuilding, bestOption);
+                }
+                else if (destBuilding == null)
+                {
+                 //   Debug.Log(h.collider.gameObject + " " + h.collider.gameObject.transform.position + " " + destBuilding + " " + destBuilding.transform.position);
+                    getAroundBuilding(h.collider.gameObject, destination, destBuilding, bestOption);
+                }
+            }
+        }
+
     }
 
 }

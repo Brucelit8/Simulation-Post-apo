@@ -91,4 +91,9 @@ public class BuildState : ISurvivor
     {
         survivor.currentState = survivor.sleepState;
     }
+
+    public void ToHealState()
+    {
+
+    }
 }

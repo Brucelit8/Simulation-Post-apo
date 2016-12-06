@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class RepairState : ISurvivor
 {
@@ -31,7 +32,7 @@ public class RepairState : ISurvivor
         if(!isRepairing)
         {
             isRepairing = true;
-            Home.GetComponent<House>().setScrap(Home.GetComponent<House>().getScrap() - 3);
+            Home.GetComponent<House>().setScrap(Home.GetComponent<House>().getScrap() - 1);
             repairingTime = Time.fixedTime;
 
         }
@@ -96,5 +97,10 @@ public class RepairState : ISurvivor
     public void ToSleepState()
     {
         survivor.currentState = survivor.sleepState;
+    }
+
+    public void ToHealState()
+    {
+
     }
 }

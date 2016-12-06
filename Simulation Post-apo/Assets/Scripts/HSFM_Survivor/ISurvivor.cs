@@ -18,4 +18,7 @@ public interface ISurvivor {
     void ToHomeState();
 
     void ToRepairState();
+
+    void ToHealState();
+
 }

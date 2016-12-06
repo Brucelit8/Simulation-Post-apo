@@ -8,9 +8,9 @@ public class CollectState : ISurvivor
     bool moving = false;
     float rX, rZ;
     float movementRange = 4f;
-    bool wayPointsListInstantiated = false;
-    bool lastPointReached = false;
+    float currentTime = 0.0f;
 
+    bool noResources = false;
     bool collectingRessources = false;
     bool goingHome = false;
     bool roadHomeSet = false;
@@ -20,23 +20,42 @@ public class CollectState : ISurvivor
     GameObject buildingCollected;
 
     Vector3 point;
-    Vector3 destinationRotation;
-    Ray ray;
     RaycastHit hit;
-
-    List<Vector3> wayPointsList;
-    Vector3 nextDestination;
-
 
     public CollectState(SurvivorBasicState survivorState)
     {
         survivor = survivorState;
     }
 
+    public bool getNoResources()
+    {
+        return noResources;
+    }
+
+    public void setMoving(bool b)
+    {
+        moving = b;
+    }
+
+    public void setGoingHome(bool b)
+    {
+        goingHome = b;
+    }
+
     // Use this for initialization
     void Start()
     {
-        wayPointsList = survivor.getWayPointsList();
+       // wayPointsList = survivor.getWayPointsList();
+    }
+
+    public void Initialize()
+    {
+        roadHomeSet = false;
+        moving = false;
+        goingHome = false;
+        collectingRessources = false;
+        survivor.getWayPointsList().Clear();
+        stateChanged = false;
     }
 
     // Update is called once per frame
@@ -48,7 +67,34 @@ public class CollectState : ISurvivor
             ToNourrishState();
         }
 
-        if (!moving)
+        if(survivor.getSurvivorHealth() <= 50)
+        {
+            if(survivor.survivorBandage > 0)
+            {
+                survivor.survivorBandage--;
+                survivor.setSurvivorHealth(100.0f);
+            }
+            else
+            {
+                moving = true;
+                goingHome = true;
+                collectingRessources = true;
+            }
+
+
+        }
+        
+
+        if(currentTime >= 15.0f)
+        {
+            noResources = true;
+        }
+        else
+        {
+            currentTime += 0.01f;
+        }
+
+        if (!moving && !stateChanged)
         {
             /*
             if (!wayPointsListInstantiated)
@@ -70,13 +116,6 @@ public class CollectState : ISurvivor
             {
                 if (hit.collider.gameObject.tag == "Wall")
                 {
-                    /*Vector3 destRange = new Vector3(point.x - survivor.transform.position.x, point.y - survivor.transform.position.y, point.z - survivor.transform.position.z);
-                    destRange = Quaternion.Euler(0, 180, 0) * destRange;
-                    Debug.DrawLine(survivor.transform.position, destRange, Color.red);
-                    point.x = survivor.transform.position.x + destRange.x;
-                    point.y = survivor.transform.position.y + destRange.y;
-                    point.z = survivor.transform.position.z + destRange.z;*/
-
                     int indiceX;
                     int indiceZ;
 
@@ -90,30 +129,36 @@ public class CollectState : ISurvivor
                     else
                         indiceZ = (int)point.z + 1;
 
-                    if (survivor.currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ] == 1)
+                    if (indiceX < 0)
+                        indiceX = 0;
+                    else if (indiceX > survivor.getMap().GetComponent<Map>().getSize() - 1)
+                        indiceX = survivor.getMap().GetComponent<Map>().getSize() - 1;
+
+                    if (indiceZ < 0)
+                        indiceZ = 0;
+                    else if (indiceZ > survivor.getMap().GetComponent<Map>().getSize() - 1)
+                        indiceZ = survivor.getMap().GetComponent<Map>().getSize() - 1;
+
+                    if (survivor.getMap().GetComponent<Map>().getMap()[indiceX, indiceZ] == 1)
                     {
                         moving = false;
-                        /*Debug.Log(destination);
-                        Debug.Log(indiceX + " " + indiceZ);
-                        Debug.Log(currentMap.GetComponent<Map>().getMap()[indiceX, indiceZ]);*/
-                        //getAroundBuilding(this.transform.position, hit.collider.gameObject, destination, destBuilding);
-                        //wayPointsList.Insert(wayPointsList.Count, destination);
                     }
                 }
             }
 
             //CHECK WALL 2
-            if (point.x <= 0.7f || point.x >= survivor.currentMap.GetComponent<Map>().getSize() - 2 || point.z <= 0.7f || point.z >= survivor.currentMap.GetComponent<Map>().getSize() - 2)
+            if (point.x <= 0.7f || point.x >= survivor.getMap().GetComponent<Map>().getSize() - 2 || point.z <= 0.7f || point.z >= survivor.getMap().GetComponent<Map>().getSize() - 2)
                 moving = false;
             else
             {
                 moving = true;
-                lastPointReached = false;
                 survivor.checkBuildingHit(point, null, moving, false);
-                // survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, point);
-
-                if (survivor.getWayPointsList().Count == 0)
+                survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, point);
+                if (survivor.destInBuilding)
+                {
                     moving = false;
+                    survivor.destInBuilding = false;
+                }
             }
         }
         else
@@ -125,25 +170,18 @@ public class CollectState : ISurvivor
             //ROAMING
             if (!collectingRessources && !goingHome)
             {
-                if (!lastPointReached)
+                survivor.transform.position = Vector3.MoveTowards(survivor.transform.position, survivor.getWayPointsList()[0], survivor.speed * Time.deltaTime);
+                //Debug.DrawLine(survivor.transform.position, point);
+
+                if (Vector3.Distance(survivor.transform.position, survivor.getWayPointsList()[0]) < 0.3f)
                 {
-                    survivor.transform.position = Vector3.MoveTowards(survivor.transform.position, survivor.getWayPointsList()[0], survivor.speed * Time.deltaTime);
-                    Debug.DrawLine(survivor.transform.position, point);
-
-                    if (Vector3.Distance(survivor.transform.position, survivor.getWayPointsList()[0]) < 0.3f)
+                    if (survivor.getWayPointsList().Count == 1)
                     {
-                        if (survivor.getWayPointsList().Count == 1)
-                        {
-                            lastPointReached = true;
-                            moving = false;
-                        }
-                        else
-                            survivor.getWayPointsList().RemoveAt(0);
+                        moving = false;
                     }
+                    else
+                        survivor.getWayPointsList().RemoveAt(0);
                 }
-
-                else
-                    moving = false;
             }
 
             //COLLECTING
@@ -162,6 +200,7 @@ public class CollectState : ISurvivor
                         {
                             survivor.survivorFood += 1;
                             buildingCollected.GetComponent<Building>().setFood(buildingCollected.GetComponent<Building>().getFood() - 1);
+                            currentTime = 0.0f;
                             string s = buildingCollected.tag;
                             if ((buildingCollected.GetComponent(s) as Building).selected)
                             {
@@ -174,6 +213,7 @@ public class CollectState : ISurvivor
                         {
                             survivor.survivorWater += 1;
                             buildingCollected.GetComponent<Building>().setWater(buildingCollected.GetComponent<Building>().getWater() - 1);
+                            currentTime = 0.0f;
                             string s = buildingCollected.tag;
                             if ((buildingCollected.GetComponent(s) as Building).selected)
                             {
@@ -244,7 +284,7 @@ public class CollectState : ISurvivor
                 {
                     survivor.getWayPointsList().Clear();
                     survivor.checkBuildingHit(survivor.home.transform.position, survivor.home, moving, true);
-                    //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
+                    survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
                     roadHomeSet = true;
                 }
 
@@ -270,7 +310,7 @@ public class CollectState : ISurvivor
                         survivor.home.GetComponent<House>().setWater(survivor.home.GetComponent<House>().getScrap() + survivor.survivorScrap);
                         survivor.survivorScrap = 0;
 
-                        if(survivor.home.GetComponent<House>().selected)
+                        if (survivor.home.GetComponent<House>().selected)
                         {
                             survivor.home.GetComponent<House>().Details();
                         }
@@ -293,6 +333,7 @@ public class CollectState : ISurvivor
 
         if(stateChanged)
         {
+            roadHomeSet = false;
             goingHome = false;
             collectingRessources = false;
             moving = false;
@@ -326,7 +367,7 @@ public class CollectState : ISurvivor
 
     public void ToFightState()
     {
-
+        survivor.currentState = survivor.homeState;
     }
 
     public void ToNourrishState()
@@ -337,6 +378,11 @@ public class CollectState : ISurvivor
     }
 
     public void ToCollectState()
+    {
+
+    }
+
+    public void ToHealState()
     {
 
     }
@@ -375,8 +421,8 @@ public class CollectState : ISurvivor
                     buildingCollected = other.gameObject;
                     survivor.getWayPointsList().Clear();
                     survivor.checkBuildingHit(buildingCollected.transform.position, buildingCollected, true, true);
-                    //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
-                    //    other.gameObject.transform.position.z));
+                    survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
+                        other.gameObject.transform.position.z));
                     collectingRessources = true;
                 }
             }
@@ -387,8 +433,8 @@ public class CollectState : ISurvivor
                 buildingCollected = other.gameObject;
                 survivor.getWayPointsList().Clear();
                 survivor.checkBuildingHit(buildingCollected.transform.position, buildingCollected, true, true);
-                //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
-                //    other.gameObject.transform.position.z));
+                survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, new Vector3(other.gameObject.transform.position.x, survivor.transform.position.y,
+                    other.gameObject.transform.position.z));
                 collectingRessources = true;
             }
         }

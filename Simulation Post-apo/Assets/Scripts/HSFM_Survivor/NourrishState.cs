@@ -44,7 +44,12 @@ public class NourrishState : ISurvivor
         }
 
         else if ((survivor.survivorFood == 0 && survivor.getSurvivorHunger() < minHunger) || (survivor.survivorWater == 0 && survivor.getSurvivorThirst() < minThirst))
-            goBackHome();
+        {
+            if(survivor.homeSet)
+            {
+                goBackHome();
+            }
+        }
     }
 
     void goBackHome()
@@ -53,7 +58,7 @@ public class NourrishState : ISurvivor
         {
             survivor.getWayPointsList().Clear();
             survivor.checkBuildingHit(survivor.home.transform.position, survivor.home, true, true);
-            //survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
+            survivor.getWayPointsList().Insert(survivor.getWayPointsList().Count, survivor.home.transform.position);
             roadHomeSet = true;
         }
 
@@ -62,7 +67,7 @@ public class NourrishState : ISurvivor
         else
             detectionRange = 1.3f;
 
-        Debug.Log("Detection: " + detectionRange + ", Dest : " + survivor.getWayPointsList()[0]);
+        //Debug.Log("Detection: " + detectionRange + ", Dest : " + survivor.getWayPointsList()[0]);
         survivor.transform.position = Vector3.MoveTowards(survivor.transform.position, survivor.getWayPointsList()[0], survivor.speed * Time.deltaTime);
 
         if (Vector3.Distance(survivor.transform.position, survivor.getWayPointsList()[0]) < detectionRange)
@@ -82,7 +87,8 @@ public class NourrishState : ISurvivor
                     survivor.home.GetComponent<Building>().setWater(survivor.home.GetComponent<Building>().getWater() - 1);
                     survivor.setSurvivorThirst(survivor.getSurvivorThirst() + 50);
                 }
-
+                roadHomeSet = false;
+                ToHomeState();
             }
             else
             {
@@ -130,5 +136,10 @@ public class NourrishState : ISurvivor
     public void ToSleepState()
     {
         survivor.currentState = survivor.sleepState;
+    }
+
+    public void ToHealState()
+    {
+
     }
 }

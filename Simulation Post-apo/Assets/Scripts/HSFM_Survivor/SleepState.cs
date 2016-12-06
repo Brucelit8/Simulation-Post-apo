@@ -32,6 +32,10 @@ public class SleepState : ISurvivor
                 if(Time.fixedTime - currentTime >= 0.5f)
                 {
                     survivor.setSurvivorTiredness(survivor.getSurvivorTiredness() + 10);
+                    if(survivor.getSurvivorHealth() + 1 < 100 )
+                    {
+                        survivor.setSurvivorHealth(survivor.getSurvivorHealth() + 1);
+                    }
                     currentTime = Time.fixedTime;
                 }
             }
@@ -82,6 +86,11 @@ public class SleepState : ISurvivor
     }
 
     public void OnTriggerEnter(Collider other)
+    {
+
+    }
+
+    public void ToHealState()
     {
 
     }
